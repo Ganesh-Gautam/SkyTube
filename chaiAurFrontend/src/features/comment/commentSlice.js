@@ -124,6 +124,15 @@ const commentSlice = createSlice({
       },
     },
 
+    replaceTempComment :(state, action) =>{
+      const {tempId ,newComment} = action.payload;
+      const index = state.items.findIndex((c)=> c._id ===tempId);
+      if (index !== -1) {
+        state.items[index] = newComment;
+        delete state.tempComments[tempId];
+      }
+    } ,
+
     removeTempComment: (state, action) => {
       state.items = state.items.filter((c) => c._id !== action.payload);
       delete state.tempComments[action.payload];
@@ -224,6 +233,7 @@ const commentSlice = createSlice({
 
 export const {
   addCommentOptimistic,
+  replaceTempComment,
   removeTempComment,
   toggleLikeOptimistic,
   clearComments,

@@ -99,6 +99,7 @@ const addComment = asyncHandler(async (req, res)=>{
         owner : req.user?._id,
         parent
     });
+    await comment.populate("owner", "userName avatar");
 
     await Video.findByIdAndUpdate(videoId, {
         $inc : {commentCount :1}

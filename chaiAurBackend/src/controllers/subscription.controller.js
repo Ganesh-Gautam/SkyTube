@@ -9,6 +9,9 @@ import { asyncHandler } from "../utils/asyncHandler.js"
 const toggleSubscription= asyncHandler(async(req, res)=>{
     const {channelId}=req.params;
     const subscriberId= req.user._id;
+    if(!subscriberId) {
+        throw new ApiError(400,"login to subscribe/unsubscribe")
+    }
 
     if(!channelId){
         throw new ApiError(400,"Channel Id is required");
@@ -37,18 +40,17 @@ const toggleSubscription= asyncHandler(async(req, res)=>{
 })
 
 const getUserChannelSubscribers= asyncHandler(async(req, res)=>{
-    const {channel}= req.params;  
-    const user = await User.findOne({
-        $or: [{ userName: channel }, { email: channel }]
+    const {channelId}= req.params;
+    const subscriberId= req.user?._id;   
+    const isSubscribed = await Subscription.exists({
+        subscriber: subscriberId,
+        channel: channelId
     });
-    if (!user) {
-        throw new ApiError(404, "Channel not found");
-    } 
+
+
     const subscribers= await Subscription.aggregate([
         {
-            $match: {
-                channel: user._id
-            }
+            $match: { channel: new mongoose.Types.ObjectId(channelId)}
         },{
             $lookup: {
                 from : "users",
@@ -68,7 +70,7 @@ const getUserChannelSubscribers= asyncHandler(async(req, res)=>{
     ]);
     return res.status(200).json(
         new ApiResponse(
-            200,{subscriberCount: subscribers.length, subscribers},
+            200,{subscriberCount: subscribers.length , isSubscribed: Boolean(isSubscribed) },
             "Subscribers fetched successfully"
         )
     )

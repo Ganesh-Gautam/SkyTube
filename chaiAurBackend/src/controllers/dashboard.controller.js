@@ -45,8 +45,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
         {
             $group: {
                 _id: null,
-                totalVideos: { $sum: 1 },
-                totalViews: { $sum: "$views" },
+                totalVideos: { $sum: 1 }, 
                 totalLikes: { $sum: { $size: "$likes" } },
                 totalComments: { $sum: { $size: "$comments" } }
             }
@@ -54,8 +53,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
     ]);
 
     const channelStats = stats[0] || {
-        totalVideos: 0,
-        totalViews: 0,
+        totalVideos: 0, 
         totalLikes: 0,
         totalComments: 0
     };
@@ -63,6 +61,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
     return res.status(200).json(
         new ApiResponse(200, {
             ...channelStats,
+            channelId: channel._id,
             userName: channel.userName,
             avatar: channel.avatar,
             coverImage: channel.coverImage
@@ -101,8 +100,7 @@ const getChannelVideos = asyncHandler(async(req,res)=>{
                     thumbnail : 1,
                     title : 1,
                     description : 1,
-                    duration : 1,
-                    views : 1,
+                    duration : 1, 
                     createdAt : 1
                 }
             }

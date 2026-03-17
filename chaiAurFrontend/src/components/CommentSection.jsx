@@ -6,6 +6,7 @@ import {
   fetchComments,
   addComment,
   addCommentOptimistic,
+  replaceTempComment,
   removeTempComment,
 } from "../features/comment/commentSlice";
 
@@ -38,13 +39,14 @@ function CommentSection({ videoId }) {
     const tempId = optimisticAction.payload._id;
 
     try {
-      await dispatch(
+      const newComment = await dispatch(
         addComment({
           videoId,
           content,
           parent: null,
         })
       ).unwrap();
+      dispatch(replaceTempComment({ tempId, newComment }))
 
       setContent("");
     } catch (error) {

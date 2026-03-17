@@ -123,7 +123,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
         userId
     } = req.query;
 
-    const allowedSortFields = ['createdAt','views','duration','title'];
+    const allowedSortFields = ['createdAt','duration','title'];
     const validSortBy = allowedSortFields.includes(sortBy)? sortBy : 'createdAt';
     const validLimit =Math.min(Math.max(Number(limit),1),50);
     const validPage = Math.max(Number(page),1);
@@ -148,7 +148,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
     const [videos,total]=await Promise.all([
         Video.find(filter)
-        .populate("owner","username avatar")
+        .populate("owner","userName avatar")
         .sort(sort).skip(skip)
         .limit(validLimit).lean(),
         Video.countDocuments(filter)

@@ -26,7 +26,7 @@ Each phase delivers a **fully functional app** with specific features.
 ### Features:
 -  Video upload with thumbnail
 -  Home page displays all videos
--  Video cards with thumbnail, title, views, date
+-  Video cards with thumbnail, title, date
 -  Basic video player
 -  Video watch page
 
@@ -98,7 +98,7 @@ Each phase delivers a **fully functional app** with specific features.
 
 ### Features:
 -  Search videos by title/description
--  Filter videos by date, views, etc.
+-  Filter videos by date etc.
 -  Trending page
 -  Search suggestions
 -  Recent searches

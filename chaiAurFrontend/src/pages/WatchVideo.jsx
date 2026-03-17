@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchVideoById , toggleVideoLike} from "../features/video/videoSlice";
 import CommentSection from "../components/CommentSection.jsx";
+import SubscribeButton from "../components/SubscribeButton";
 
 export default function WatchVideo() {
   const { videoId } = useParams();
@@ -49,16 +50,13 @@ export default function WatchVideo() {
             {currentVideo.owner?.userName}
           </p>
         </div>
+        <SubscribeButton channelId={currentVideo.owner._id} />
       </div>
 
       <button onClick={() => dispatch(toggleVideoLike(currentVideo._id))}>
         {currentVideo?.isLiked ? "❤️" : "🤍"} {" "}
         {currentVideo?.likeCount || 0}
       </button>
-
-      <p className="text-gray-500 mt-2">
-        {currentVideo.views} views
-      </p>
 
       <p className="mt-3">{currentVideo.description}</p>
 

@@ -11,17 +11,24 @@ const formatDuration = (duration) => {
 export default function ChannelVideoCard({ video }) {
   return (
     <div>
-      <Link to={`/watch/${video._id}`}>
-        <img
-          src={video.thumbnail}
-          alt={video.title}
-          className="w-full h-48 object-cover rounded"
-        />
-        <span className="absolute bottom-2 right-2 bg-black text-white text-xs px-2 py-1 rounded">
-          {formatDuration(video.duration)}
-        </span>
+      <div className="relative">
+        <Link to={`/watch/${video._id}`}>
+          <img
+            src={video.thumbnail}
+            alt={video.title}
+            className="w-full h-48 object-cover rounded"
+          />
+          <span 
+            className="absolute bottom-2 right-2 
+              bg-black/70 text-white text-xs font-semibold 
+              px-2.5 py-0.5 rounded-md shadow-md 
+              backdrop-blur-sm"
+          >
+            {formatDuration(video.duration)}
+          </span>
 
-      </Link>
+        </Link>
+      </div>
 
       <div className="flex gap-3 mt-3">
        
@@ -33,8 +40,7 @@ export default function ChannelVideoCard({ video }) {
           </Link>
 
         
-          <p className="text-sm text-gray-500">
-            {video.views} views •{" "}
+          <p className="text-sm text-gray-500"> 
             {formatDistanceToNow(new Date(video.createdAt), {
               addSuffix: true,
             })}

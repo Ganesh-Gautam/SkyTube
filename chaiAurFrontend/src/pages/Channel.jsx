@@ -5,6 +5,7 @@ import { FiEdit } from "react-icons/fi";
 import channelService from "../features/channel/channelService.js";
 import ChannelVideoCard from "../components/ChannelVideoCard.jsx";
 import { Link } from "react-router-dom";
+import SubscribeButton from "../components/SubscribeButton";
 
 export default function Channel() {
   const { channelName } = useParams(); 
@@ -16,7 +17,7 @@ export default function Channel() {
   const { user } = useSelector((state) => state.auth); 
 
   const isOwner =
-  user.user?.userName?.trim().toLowerCase() ===
+  user?.user?.userName?.trim().toLowerCase() ===
   channelName?.trim().toLowerCase();
   useEffect(() => {
     fetchChannel();
@@ -38,10 +39,10 @@ export default function Channel() {
 
   return (
     <div>
-      <div className="relative">
-        {stats.coverImage ? (
+      <div className="relative"> 
+        {stats?.coverImage ? (
           <img
-            src={stats.coverImage}
+            src={stats?.coverImage}
             alt="cover"
             className="w-full h-full object-cover"
             onError={(e) => {
@@ -64,9 +65,11 @@ export default function Channel() {
               {channelName}
             </h1>
             <p className="text-gray-500">
-              {stats.totalVideos} videos • {stats.totalViews} views <br/> {stats.totalLikes} likes • {stats.totalComments} comments
+              {stats?.totalVideos} videos  <br/> {stats?.totalLikes} likes • {stats?.totalComments} comments
               
             </p>
+            <SubscribeButton channelId={stats?.channelId} />
+
           </div>
         </div>
         {isOwner && (
