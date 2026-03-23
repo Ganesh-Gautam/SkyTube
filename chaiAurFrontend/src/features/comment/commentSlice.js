@@ -213,23 +213,25 @@ const commentSlice = createSlice({
       });
 
     builder
-      .addCase(toggleCommentLike.fulfilled, (state, action) => {
-        const comment = state.items.find((c) => c._id === action.payload.commentId);
-        if (!comment) return;
-        
-        if (action.payload.likeCount !== undefined) {
+      .addCase(toggleCommentLike.pending, (state, action) => {
+          const comment = state.items.find((c) => c._id === action.meta.arg);
+          if (!comment) return;
+          comment.isLiked   = !comment.isLiked;                    
+          comment.likeCount += comment.isLiked ? 1 : -1;
+      })
+      .addCase(toggleCommentLike.fulfilled, (state, action) => { 
+          const comment = state.items.find((c) => c._id === action.payload.commentId);
+          if (!comment) return;
           comment.likeCount = action.payload.likeCount;
-        }
       })
       .addCase(toggleCommentLike.rejected, (state, action) => {
-        const commentId = action.meta.arg; 
-        const comment = state.items.find((c) => c._id === commentId);
-        if (!comment) return;
-        comment.isLiked = !comment.isLiked;
-        comment.likeCount += comment.isLiked ? 1 : -1;
+          const comment = state.items.find((c) => c._id === action.meta.arg);
+          if (!comment) return;
+          comment.isLiked   = !comment.isLiked;                     
+          comment.likeCount += comment.isLiked ? 1 : -1;
+      })
+        },
       });
-  },
-});
 
 export const {
   addCommentOptimistic,

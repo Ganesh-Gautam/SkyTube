@@ -17,6 +17,9 @@ import Channel from './pages/Channel.jsx';
 import EditChannel from './pages/EditChannel.jsx';
 import SubscriptionsPage from './pages/SubscriptionPage.jsx';
 
+import CommunityTab from './pages/CommunityTab.jsx';
+import CreatorStudio from './pages/CreatorStudio.jsx';
+
 const router = createBrowserRouter([
   {
     path : '/',
@@ -71,6 +74,22 @@ const router = createBrowserRouter([
         element : ( 
           <AuthLayout authentication={true}>
             <SubscriptionsPage/> 
+          </AuthLayout>
+        )
+      },
+      {
+        path : "/tweets/CommunityTab",
+        element :(
+          <AuthLayout>
+            <CommunityTab/>
+          </AuthLayout>
+        )
+      },
+      {
+        path : "/studio",
+        element : ( 
+          <AuthLayout authentication={true}>
+            <CreatorStudio/> 
           </AuthLayout>
         )
       }

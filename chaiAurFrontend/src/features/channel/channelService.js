@@ -5,10 +5,11 @@ const getChannelStats = async (channelName) => {
   return res.data.data;
 };
 
+
 const getChannelVideos = async (channelName, params) => {
   const res = await axios.get(`/dashboard/videos/${channelName}`, {
     params,
-  });
+  }); 
   return res.data.data;
 };
 
@@ -56,7 +57,7 @@ const changePassword = async (data) => {
 
 
 export default {
-  getChannelStats,
+  getChannelStats, 
   getChannelVideos,
   updateAccountDetails,
   updateAvatar,

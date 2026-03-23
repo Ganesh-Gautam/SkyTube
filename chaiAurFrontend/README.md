@@ -74,8 +74,6 @@ Each phase delivers a **fully functional app** with specific features.
 - Create community post/tweet (text)
 - Channel community tab
 - Like posts
-- Comment on posts
-- Subscribers-only feed (optional)
 - Edit/delete own posts 
 
 --- 

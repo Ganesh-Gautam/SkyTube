@@ -2,7 +2,7 @@ import { useEffect} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchVideoById , toggleVideoLike} from "../features/video/videoSlice";
-import CommentSection from "../components/CommentSection.jsx";
+import CommentSection from "../components/comment/CommentSection.jsx";
 import SubscribeButton from "../components/SubscribeButton";
 
 export default function WatchVideo() {

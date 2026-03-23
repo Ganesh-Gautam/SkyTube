@@ -10,7 +10,10 @@ const initialState = {
     pagination : null,
     isLoading : false,
     isError : false,
-    message :""
+    message :"",
+    deletingId: null,   
+    togglingId: null, 
+    updatingId: null,
 }
 
 export const fetchVideos = createAsyncThunk(
@@ -55,10 +58,49 @@ export const uploadVideo = createAsyncThunk(
     }
 );
 
+export const deleteVideo = createAsyncThunk(
+    "video/delete",
+    async (videoId, thunkAPI) => {
+        try {
+            return await videoService.deleteVideo(videoId); // returns videoId
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message);
+        }
+    }
+);
+
+export const updateVideo = createAsyncThunk(
+    "video/update",
+    async ({ videoId, formData }, thunkAPI) => { 
+        try {
+            return await videoService.updateVideo({ videoId, formData });
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message);
+        }
+    }
+);
+
+export const togglePublishStatus = createAsyncThunk(
+    "video/togglePublish",
+    async (videoId, thunkAPI) => {
+        try {
+            const data = await videoService.togglePublishStatus(videoId);
+            return { videoId, isPublished: data.isPublished };
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message);
+        }
+    }
+);
+
 const videoSlice = createSlice({
     name: "video",
     initialState,
-    reducers: {},
+    reducers: {
+        clearVideoError(state) {
+            state.isError = false;
+            state.message = "";
+        },
+    },
     extraReducers : (builder) => {
         builder
         .addCase(fetchVideos.pending,(state)=>{
@@ -86,8 +128,70 @@ const videoSlice = createSlice({
         })
         .addCase(uploadVideo.fulfilled, (state, action) => {
             state.videos.unshift(action.payload);
+        })
+
+        .addCase(deleteVideo.pending, (state, action) => {
+            state.deletingId = action.meta.arg;
+        })
+        .addCase(deleteVideo.fulfilled, (state, action) => {
+            state.deletingId = null;
+            state.videos     = state.videos.filter((v) => v._id !== action.payload);
+            if (state.currentVideo?._id === action.payload) {
+                state.currentVideo = null;
+            }
+        })
+        .addCase(deleteVideo.rejected, (state, action) => {
+            state.deletingId = null;
+            state.isError    = true;
+            state.message    = action.payload;
+        })
+
+        .addCase(updateVideo.pending, (state, action) => {
+            state.updatingId = action.meta.arg.videoId;
+        })
+        .addCase(updateVideo.fulfilled, (state, action) => {
+            state.updatingId = null;
+            const idx = state.videos.findIndex((v) => v._id === action.payload._id);
+            if (idx !== -1) state.videos[idx] = action.payload;
+            if (state.currentVideo?._id === action.payload._id) {
+                state.currentVideo = action.payload;
+            }
+        })
+        .addCase(updateVideo.rejected, (state, action) => {
+            state.updatingId = null;
+            state.isError    = true;
+            state.message    = action.payload;
+        })
+
+        .addCase(togglePublishStatus.pending, (state, action) => {
+            state.togglingId = action.meta.arg;
+        })
+        .addCase(togglePublishStatus.fulfilled, (state, action) => {
+            state.togglingId = null;
+            const { videoId, isPublished } = action.payload;
+            const video = state.videos.find((v) => v._id === videoId);
+            if (video) video.isPublished = isPublished;
+            if (state.currentVideo?._id === videoId) {
+                state.currentVideo.isPublished = isPublished;
+            }
+        })
+        .addCase(togglePublishStatus.rejected, (state, action) => {
+            state.togglingId = null;
+            state.isError    = true;
+            state.message    = action.payload;
         });
     }
 });
+
+export const { clearVideoError } = videoSlice.actions;
+
+export const selectAllVideos     = (state) => state.video.videos;
+export const selectCurrentVideo  = (state) => state.video.currentVideo;
+export const selectVideoLoading  = (state) => state.video.isLoading;
+export const selectVideoError    = (state) => state.video.message;
+export const selectPagination    = (state) => state.video.pagination;
+export const selectDeletingId    = (state) => state.video.deletingId;
+export const selectTogglingId    = (state) => state.video.togglingId;
+export const selectUpdatingId    = (state) => state.video.updatingId;
 
 export default videoSlice.reducer;

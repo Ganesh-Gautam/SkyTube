@@ -70,50 +70,57 @@ const getChannelStats = asyncHandler(async (req, res) => {
 });
 
 
-const getChannelVideos = asyncHandler(async(req,res)=>{
-    const {channelName}= req.params;
-    const {page=1, limit =10}=req.query;
-        
-    if(!channelName?.trim()){
-        throw new ApiError(400,"Channel Name/Email is missing")
-    }
-    const channel = await User.findOne({
-        $or: [{ userName: channelName }, { email: channelName }]
-    });
+const getChannelVideos = asyncHandler(async (req, res) => {
+  const { channelName } = req.params;
+  const { page = 1, limit = 10 } = req.query;
 
-    const options = {
-        page : Number(page),
-        limit : Number(limit),
-        sort : {createdAt :-1}
-    };
+  if (!channelName?.trim()) {
+    throw new ApiError(400, "Channel Name/Email is missing");
+  }
 
-    const videos = await Video.aggregatePaginate(
-        Video.aggregate([
-            {
-                $match : {
-                    owner : new mongoose.Types.ObjectId(channel._id),
-                    isPublished : true
-                }
-            },{
-                $project : {
-                    videoFile : 1 ,
-                    thumbnail : 1,
-                    title : 1,
-                    description : 1,
-                    duration : 1, 
-                    createdAt : 1
-                }
-            }
-        ]),
-        options
-    );
+  const channel = await User.findOne({
+    $or: [{ userName: channelName }, { email: channelName }]
+  });
 
-    return res.status(200).json(
-        new ApiResponse(200,videos,"Channel videos fetched successfully")
-    )
+  if (!channel) {
+    throw new ApiError(404, "Channel not found");
+  }
 
-})
+  const isOwner = req.user?._id?.toString() === channel._id.toString();
+
+  const options = {
+    page: Number(page),
+    limit: Number(limit),
+    sort: { createdAt: -1 }
+  };
+
+  const videos = await Video.aggregatePaginate(
+    Video.aggregate([
+      {
+        $match: {
+          owner: channel._id,
+          ...(isOwner ? {} : { isPublished: true })
+        }
+      },
+      {
+        $project: {
+          thumbnail: 1,
+          title: 1,
+          description: 1,
+          isPublished: 1,
+          duration: 1,
+          createdAt: 1
+        }
+      }
+    ]),
+    options
+  );
+
+  return res.status(200).json(
+    new ApiResponse(200, videos, "Channel videos fetched successfully")
+  );
+});
 
 export {
-    getChannelStats ,getChannelVideos
+    getChannelStats, getChannelVideos
 }

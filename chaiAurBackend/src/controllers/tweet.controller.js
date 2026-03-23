@@ -72,16 +72,83 @@ const deleteTweet = asyncHandler(async (req, res) => {
     }
 }) 
 
-const getUserTweets = asyncHandler(async(req,res)=>{
-    try {
-        const tweets = await Tweet.find({ "owner": req.user._id });
-        return res.status(200).json(
-            new ApiResponse(200, tweets, "User's tweet fetched Successfully")
-    )
-    } catch (error) {
-        throw new ApiError(403,"Invalid Request")
+const getUserTweets = asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+    const currentUserId = req.user?._id;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        throw new ApiError(400, "Invalid userId");
     }
-})
+
+    const pipeline = [
+        {
+            $match: {
+                owner: new mongoose.Types.ObjectId(userId)
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                    {
+                        $project: {
+                            userName: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $unwind: "$owner"
+        },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "tweet",
+                as: "likes"
+            }
+        },
+        {
+            $addFields: {
+                likesCount: { $size: "$likes" },
+                isLiked: {
+                    $in: [
+                        new mongoose.Types.ObjectId(currentUserId),
+                        "$likes.likedBy"
+                    ]
+                }
+            }
+        },
+        {
+            $project: {
+                likes: 0   
+            }
+        },
+        {
+            $sort: { createdAt: -1 }
+        }
+    ];
+
+    const options = {
+        page: Number(page),
+        limit: Number(limit)
+    };
+
+    const tweets = await Tweet.aggregatePaginate(
+        Tweet.aggregate(pipeline),
+        options
+    );
+
+    return res.status(200).json(
+        new ApiResponse(200, tweets, "User's tweets fetched successfully")
+    );
+});
 
 
 export {
