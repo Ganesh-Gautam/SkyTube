@@ -43,6 +43,11 @@ Each phase delivers a **fully functional app** with specific features.
 -  Edit channel details
 -  Update avatar/cover image
 
+### channel owner can manage videos by  channel studio
+- Edit Videos
+- Publish / unpublish videos
+- Delete videos
+
 ---
 
 ##  PHASE 4: Comments & Engagement 
@@ -86,7 +91,6 @@ Each phase delivers a **fully functional app** with specific features.
 -  Add videos to playlists
 -  Remove videos from playlists
 -  View playlist
--  Play playlist
 -  Edit/delete playlists
 
 ---

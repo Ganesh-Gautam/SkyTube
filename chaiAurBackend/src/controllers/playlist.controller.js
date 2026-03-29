@@ -7,7 +7,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 const createPlaylist = asyncHandler(async(req, res)=>{
     const {name, description} = req.body;
 
-    if(!name?.trim){
+    if(!name?.trim()){
         throw new ApiError(400, "Playlist name is required")
     }
 
@@ -24,7 +24,7 @@ const createPlaylist = asyncHandler(async(req, res)=>{
 })
 
 const getUserPlaylists = asyncHandler(async(req, res)=>{
-    const userId= req.user._id; 
+    const {userId }= req.params;  
     const pipeline = [
         {
             $match : {
@@ -35,7 +35,7 @@ const getUserPlaylists = asyncHandler(async(req, res)=>{
                 from : "videos",
                 localField : "videos",
                 foreignField : "_id",
-                as : "videoDetails"
+                as : "videos"
             } 
         },
         {
@@ -43,7 +43,8 @@ const getUserPlaylists = asyncHandler(async(req, res)=>{
                 name : 1,
                 description : 1,
                 createdAt : 1,
-                updatedAt : 1
+                updatedAt : 1,
+                videos: 1 
             }
         },{
             $sort : {createdAt : -1}
@@ -106,7 +107,7 @@ if (playlist.owner.toString() !== req.user._id.toString()) {
 }
 
 playlist.videos= playlist.videos.filter(
-    (vid)=> videoId.toString()!== videoId
+    (vid)=> vid.toString() !== videoId.toString()
 )
 
 await playlist.save();
@@ -159,6 +160,6 @@ const deletePlaylist = asyncHandler(async(req, res)=>{
 export {
     createPlaylist ,
     getUserPlaylists , getPlaylistById,
-    addVideoToPlaylist, removeVideoFromPlaylist , deletePlaylist,
-    updatePlaylist
+    addVideoToPlaylist, removeVideoFromPlaylist , 
+    updatePlaylist , deletePlaylist,
 }

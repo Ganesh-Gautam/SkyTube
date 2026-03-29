@@ -1,6 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createTweet, updateTweet, selectSubmitting } from "../features/tweet/tweetSlice";
+import { createTweet, updateTweet, selectSubmitting } from "../../features/tweet/tweetSlice";
 
 export default function TweetComposer({ currentUser, editTweet = null, onCancelEdit }) {
     const dispatch   = useDispatch();

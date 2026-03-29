@@ -77,23 +77,39 @@ const getUserTweets = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
     const currentUserId = req.user?._id;
 
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
+    if (!isValidObjectId(userId)) {
         throw new ApiError(400, "Invalid userId");
     }
+
+    const parsedPage = Number.parseInt(page, 10);
+    const parsedLimit = Number.parseInt(limit, 10);
+
+    const safePage = Number.isNaN(parsedPage) || parsedPage < 1 ? 1 : parsedPage;
+    const safeLimit = Number.isNaN(parsedLimit) || parsedLimit < 1
+        ? 10
+        : Math.min(parsedLimit, 50);
 
     const pipeline = [
         {
             $match: {
-                owner: new mongoose.Types.ObjectId(userId)
+                owner: userId
             }
         },
         {
             $lookup: {
                 from: "users",
-                localField: "owner",
-                foreignField: "_id",
+                let: {
+                    ownerId: { $toObjectId: "$owner" }
+                },
                 as: "owner",
                 pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $eq: ["$_id", "$$ownerId"]
+                            }
+                        }
+                    },
                     {
                         $project: {
                             userName: 1,
@@ -109,35 +125,64 @@ const getUserTweets = asyncHandler(async (req, res) => {
         {
             $lookup: {
                 from: "likes",
-                localField: "_id",
-                foreignField: "tweet",
-                as: "likes"
+                let: {
+                    tweetId: "$_id",
+                    currentUserId: currentUserId
+                        ? new mongoose.Types.ObjectId(currentUserId)
+                        : null
+                },
+                as: "likeStats",
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $eq: ["$tweet", "$$tweetId"]
+                            }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: null,
+                            likesCount: { $sum: 1 },
+                            isLiked: {
+                                $max: {
+                                    $cond: [
+                                        { $eq: ["$likedBy", "$$currentUserId"] },
+                                        1,
+                                        0
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ]
             }
         },
         {
             $addFields: {
-                likesCount: { $size: "$likes" },
+                likesCount: {
+                    $ifNull: [{ $arrayElemAt: ["$likeStats.likesCount", 0] }, 0]
+                },
                 isLiked: {
-                    $in: [
-                        new mongoose.Types.ObjectId(currentUserId),
-                        "$likes.likedBy"
-                    ]
+                    $toBool: {
+                        $ifNull: [{ $arrayElemAt: ["$likeStats.isLiked", 0] }, 0]
+                    }
                 }
             }
         },
         {
-            $project: {
-                likes: 0   
-            }
+            $sort: { createdAt: -1 }
         },
         {
-            $sort: { createdAt: -1 }
+            $project: {
+                likeStats: 0
+            }
         }
     ];
 
     const options = {
-        page: Number(page),
-        limit: Number(limit)
+        page: safePage,
+        limit: safeLimit
     };
 
     const tweets = await Tweet.aggregatePaginate(

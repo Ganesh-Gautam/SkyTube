@@ -17,8 +17,10 @@ import Channel from './pages/Channel.jsx';
 import EditChannel from './pages/EditChannel.jsx';
 import SubscriptionsPage from './pages/SubscriptionPage.jsx';
 
-import CommunityTab from './pages/CommunityTab.jsx';
 import CreatorStudio from './pages/CreatorStudio.jsx';
+
+import You from "./pages/You.jsx";
+import PlayListDetailPage from "./pages/PlaylistDetailPage.jsx"
 
 const router = createBrowserRouter([
   {
@@ -78,21 +80,27 @@ const router = createBrowserRouter([
         )
       },
       {
-        path : "/tweets/CommunityTab",
-        element :(
-          <AuthLayout>
-            <CommunityTab/>
-          </AuthLayout>
-        )
-      },
-      {
         path : "/studio",
         element : ( 
           <AuthLayout authentication={true}>
             <CreatorStudio/> 
           </AuthLayout>
         )
-      }
+      },
+      {
+        path : "/feed/you",
+        element :(
+          <AuthLayout authentication={true}>
+            <You/> 
+          </AuthLayout>
+        )
+      },
+      {
+        path : "/playlists/:playlistId",
+        element :
+        <PlayListDetailPage/>
+      },
+    
 
     ]
   }

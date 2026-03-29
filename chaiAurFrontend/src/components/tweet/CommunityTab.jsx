@@ -6,12 +6,13 @@ import {
   selectAllTweets,
   selectTweetStatus,
   selectTweetError,
-} from "../features/tweet/tweetSlice";
-import TweetComposer from "../components/TweetComposer.jsx";
-import TweetCard from "../components/TweetCard.jsx";
+} from "../../features/tweet/tweetSlice.js";
+import TweetComposer from "./TweetComposer.jsx";
+import TweetCard from "./TweetCard.jsx";
 
 
-export default function CommunityTab({ channelOwner, channelId, currentUser, isOwner }) {
+export default function CommunityTab({ channelOwner
+  , channelId, currentUser, isOwner }) {
   const dispatch = useDispatch();
   const tweets   = useSelector(selectAllTweets);
   const status   = useSelector(selectTweetStatus);
@@ -26,7 +27,6 @@ export default function CommunityTab({ channelOwner, channelId, currentUser, isO
 
   return (
     <section className="max-w-2xl mx-auto px-4 py-6 space-y-5">
-
       {isOwner && currentUser && (
         <TweetComposer currentUser={currentUser} />
       )}

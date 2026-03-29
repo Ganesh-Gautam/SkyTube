@@ -123,49 +123,52 @@ const getAllVideos = asyncHandler(async (req, res) => {
         userId
     } = req.query;
 
-    const allowedSortFields = ['createdAt','duration','title'];
-    const validSortBy = allowedSortFields.includes(sortBy)? sortBy : 'createdAt';
-    const validLimit =Math.min(Math.max(Number(limit),1),50);
-    const validPage = Math.max(Number(page),1);
+    const allowedSortFields = ['createdAt', 'duration', 'title'];
+    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
+    const validLimit = Math.min(Math.max(Number(limit), 1), 50);
+    const validPage = Math.max(Number(page), 1);
 
-    const filter = {};
+    const filter = { isPublished: true }; // ✅ Only fetch published videos
 
-    if(query){
-        filter.$or=[
-            {title: {$regex: query, $options: 'i'}},
-            {description: {$regex: query, $options: 'i'}}
+    if (query) {
+        filter.$or = [
+            { title: { $regex: query, $options: 'i' } },
+            { description: { $regex: query, $options: 'i' } }
         ];
     }
 
-    if(userId) {
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-        throw new ApiError(400, "Invalid user ID");
-        }
+    if (userId) {
         filter.owner = userId;
     }
-    const sort = {[validSortBy]: sortType==="asc"?1:-1};
-    const skip = (validPage-1)*validLimit;
 
-    const [videos,total]=await Promise.all([
+    const sort = { [validSortBy]: sortType === "asc" ? 1 : -1 };
+    const skip = (validPage - 1) * validLimit;
+
+    const [videos, total] = await Promise.all([
         Video.find(filter)
-        .populate("owner","userName avatar")
-        .sort(sort).skip(skip)
-        .limit(validLimit).lean(),
+            .populate("owner", "userName avatar")
+            .sort(sort)
+            .skip(skip)
+            .limit(validLimit)
+            .lean(),
         Video.countDocuments(filter)
     ]);
 
     return res.status(200).json(
-        new ApiResponse(200,{
-            videos,
-            pagination:{
-                total,
-                page: validPage,
-                limit:validLimit,
-                totalPages: Math.ceil(total/validLimit)
-            }
-        },videos.length>0 ?  "Videos fetched successfully" : "No videos found")
-    )
-        
+        new ApiResponse(
+            200,
+            {
+                videos,
+                pagination: {
+                    total,
+                    page: validPage,
+                    limit: validLimit,
+                    totalPages: Math.ceil(total / validLimit)
+                }
+            },
+            videos.length > 0 ? "Videos fetched successfully" : "No videos found"
+        )
+    );
 });
 
 const updateVideo = asyncHandler(async (req, res)=>{

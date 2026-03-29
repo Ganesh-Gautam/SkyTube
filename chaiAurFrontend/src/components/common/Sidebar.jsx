@@ -8,6 +8,7 @@ export default function Sidebar() {
         <Link to="/subscribedChannels">Subscriptions</Link>
         <Link to="/login">Login</Link>
         <Link to="/register">Register</Link>
+        <Link to="/feed/you">You</Link>
       </nav>
     </aside>
   );

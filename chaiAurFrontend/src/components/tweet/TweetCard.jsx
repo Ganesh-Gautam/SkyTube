@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteTweet, toggleTweetLike, selectDeletingId, selectLikingId } from "../features/tweet/tweetSlice";
+import { deleteTweet, toggleTweetLike, selectDeletingId, selectLikingId } from "../../features/tweet/tweetSlice";
 import TweetComposer from "./TweetComposer";
 
 function timeAgo(dateStr) {
@@ -69,10 +69,7 @@ export default function TweetCard({ tweet, currentUserId }) {
           <div className="flex-1 min-w-0">
             {/* Header */}
             <div className="flex items-start justify-between gap-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
-                  {tweet.owner?.fullName || tweet.owner?.userName}
-                </span>
+              <div className="flex items-center gap-2 flex-wrap">                 
                 <span className="text-xs text-zinc-400 dark:text-zinc-500">
                   @{tweet.owner?.userName}
                 </span>

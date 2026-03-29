@@ -5,7 +5,9 @@ import { FiEdit , FiEdit2} from "react-icons/fi";
 import channelService from "../features/channel/channelService.js";
 import ChannelVideoCard from "../components/ChannelVideoCard.jsx";
 import SubscribeButton from "../components/SubscribeButton";
-import CommunityTab from "./CommunityTab.jsx";
+import PlaylistsPage from "./PlaylistsPage.jsx";
+import CommunityTab from "../components/tweet/CommunityTab.jsx";
+
 
 
 export default function Channel() {
@@ -123,7 +125,7 @@ export default function Channel() {
       {/* Tabs */}
       <div className="border-b border-gray-200 dark:border-gray-700 px-6">
         <nav className="flex gap-6 text-sm font-medium">
-          {["videos", "community", "about"].map(tab => (
+          {["videos","playlists", "community", "about"].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -147,6 +149,10 @@ export default function Channel() {
               <ChannelVideoCard key={video._id} video={video} isOwner={isOwner} />
             ))}
           </div>
+        )}
+
+        {activeTab === "playlists" && (
+            <PlaylistsPage channelUserId={stats?.channelId} />
         )}
 
         {activeTab === "community" && (

@@ -3,7 +3,8 @@ import authReducer from "../features/auth/authSlice";
 import videoReducer from "../features/video/videoSlice";
 import commentReducer from "../features/comment/commentSlice";
 import subscriptionReducer from "../features/subscription/subscriptionSlice";
-import tweetReducer from "../features/tweet/tweetSlice"
+import tweetReducer from "../features/tweet/tweetSlice";
+import playlistReducer from "../features/playlist/playlistSlice";
 
 ;export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ import tweetReducer from "../features/tweet/tweetSlice"
     video:videoReducer,
     comments : commentReducer,
     subscription : subscriptionReducer,
-    tweets : tweetReducer
+    tweets : tweetReducer,
+    playlist : playlistReducer
   },
 });
