@@ -10,8 +10,7 @@ export const ServiceToggleCommentLike = (commentId) => {
   return res.data.data
 };
 
-export const ServiceToggleTweetLike = (tweetId) => { 
-  const res = axios.post(`/likes/toggle/t/${tweetId}`);
-  console.log(res.data.data)
-  return res.data.data
+export const ServiceToggleTweetLike = async (tweetId) => {
+  const res = await axios.post(`/likes/toggle/t/${tweetId}`);
+  return res.data.data;
 };

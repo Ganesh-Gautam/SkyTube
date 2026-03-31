@@ -4,24 +4,20 @@ import {
   fetchUserTweets,
   clearTweetError,
   selectAllTweets,
-  selectTweetStatus,
   selectTweetError,
 } from "../../features/tweet/tweetSlice.js";
 import TweetComposer from "./TweetComposer.jsx";
 import TweetCard from "./TweetCard.jsx";
 
-
-export default function CommunityTab({ channelOwner
-  , channelId, currentUser, isOwner }) {
+export default function CommunityTab({ channelOwner, channelId, currentUser, isOwner }) {
   const dispatch = useDispatch();
-  const tweets   = useSelector(selectAllTweets);
-  const status   = useSelector(selectTweetStatus);
-  const error    = useSelector(selectTweetError); 
-  
+  const tweets = useSelector(selectAllTweets);
+  const error = useSelector(selectTweetError);
+
   useEffect(() => {
-    if (status === "idle") dispatch(fetchUserTweets(channelId));
+    dispatch(fetchUserTweets(channelId));
     return () => dispatch(clearTweetError());
-  }, [dispatch ,channelId ,status]);
+  }, [dispatch, channelId]);
 
   const handleRetry = () => dispatch(fetchUserTweets(channelId));
 
@@ -31,30 +27,8 @@ export default function CommunityTab({ channelOwner
         <TweetComposer currentUser={currentUser} />
       )}
 
-      {status === "loading" && (
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="bg-white dark:bg-zinc-900 rounded-2xl border
-                                    border-zinc-200 dark:border-zinc-800 p-4 animate-pulse">
-              <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 shrink-0" />
-                <div className="flex-1 space-y-2.5">
-                  <div className="flex gap-2">
-                    <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded-full w-24" />
-                    <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded-full w-16" />
-                  </div>
-                  <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded-full w-full" />
-                  <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded-full w-4/5" />
-                  <div className="h-3 bg-zinc-200 dark:bg-zinc-800 rounded-full w-3/5" />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
       {/* Error state */}
-      {status === "failed" && (
+      {error && (
         <div className="flex flex-col items-center gap-3 py-12 text-center">
           <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/40 flex items-center justify-center">
             <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -78,7 +52,7 @@ export default function CommunityTab({ channelOwner
       )}
 
       {/* Empty state */}
-      {status === "succeeded" && tweets.length === 0 && (
+      {!error && tweets.length === 0 && (
         <div className="flex flex-col items-center gap-3 py-16 text-center">
           <div className="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
             <svg className="w-6 h-6 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -100,9 +74,8 @@ export default function CommunityTab({ channelOwner
       )}
 
       {/* Posts feed */}
-      {status === "succeeded" && tweets.length > 0 && (
+      {!error && tweets.length > 0 && (
         <div className="space-y-4">
-          {/* Post count header */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
               Posts

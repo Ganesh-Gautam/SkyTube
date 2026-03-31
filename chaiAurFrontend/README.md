@@ -100,8 +100,7 @@ Each phase delivers a **fully functional app** with specific features.
 
 ### Features:
 -  Search videos by title/description
--  Filter videos by date etc.
--  Trending page
+-  Filter videos by date etc. 
 -  Search suggestions
 -  Recent searches
 

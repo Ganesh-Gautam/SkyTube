@@ -12,7 +12,6 @@ export const fetchUserTweets = createAsyncThunk(
   async ( userId ,thunkAPI) => {
     try {
       const res = await getUserTweets(userId); 
-
       return res.data.data.docs || res.data.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -78,11 +77,10 @@ const tweetSlice = createSlice({
   name: "tweets",
   initialState: {
     tweets: [],
-    status: "idle",        // 'idle' | 'loading' | 'succeeded' | 'failed'
     error: null,
-    submitting: false,     // for create/edit operations
-    deletingId: null,      // tweetId currently being deleted
-    likingId: null,        // tweetId currently being liked
+    submitting: false,      
+    deletingId: null,      
+    likingId: null,         
   },
   reducers: {
     clearTweetError(state) {
@@ -92,16 +90,13 @@ const tweetSlice = createSlice({
   extraReducers: (builder) => {
 
     builder
-      .addCase(fetchUserTweets.pending, (state) => {
-        state.status = "loading";
+      .addCase(fetchUserTweets.pending, (state) => { 
         state.error = null;
       })
-      .addCase(fetchUserTweets.fulfilled, (state, action) => {
-        state.status = "succeeded";
+      .addCase(fetchUserTweets.fulfilled, (state, action) => { 
         state.tweets = action.payload;
       })
-      .addCase(fetchUserTweets.rejected, (state, action) => {
-        state.status = "failed";
+      .addCase(fetchUserTweets.rejected, (state, action) => { 
         state.error = action.payload;
       });
 
@@ -149,26 +144,41 @@ const tweetSlice = createSlice({
     builder
       .addCase(toggleTweetLike.pending, (state, action) => {
         state.likingId = action.meta.arg;
+        const tweet = state.tweets.find((t) => t._id === action.meta.arg);
+        if (!tweet) return;
+
+        tweet.isLiked = !tweet.isLiked;
+        tweet.likesCount = Math.max(
+          0,
+          (tweet.likesCount ?? tweet.likeCount ?? 0) + (tweet.isLiked ? 1 : -1)
+        );
       })
       .addCase(toggleTweetLike.fulfilled, (state, action) => {
         state.likingId = null;
         const tweet = state.tweets.find((t) => t._id === action.payload.tweetId);
         if (tweet) {
           tweet.isLiked = action.payload.isLiked;
-          tweet.likesCount = action.payload.likesCount;
+          tweet.likesCount = action.payload.likesCount ?? tweet.likesCount ?? 0;
         }
       })
       .addCase(toggleTweetLike.rejected, (state, action) => {
         state.likingId = null;
         state.error = action.payload;
+        const tweet = state.tweets.find((t) => t._id === action.meta.arg);
+        if (!tweet) return;
+
+        tweet.isLiked = !tweet.isLiked;
+        tweet.likesCount = Math.max(
+          0,
+          (tweet.likesCount ?? tweet.likeCount ?? 0) + (tweet.isLiked ? 1 : -1)
+        );
       });
   },
 });
 
 export const { clearTweetError } = tweetSlice.actions;
 
-export const selectAllTweets    = (state) => state.tweets.tweets;
-export const selectTweetStatus  = (state) => state.tweets.status;
+export const selectAllTweets    = (state) => state.tweets.tweets; 
 export const selectTweetError   = (state) => state.tweets.error;
 export const selectSubmitting   = (state) => state.tweets.submitting;
 export const selectDeletingId   = (state) => state.tweets.deletingId;

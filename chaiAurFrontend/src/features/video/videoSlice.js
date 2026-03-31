@@ -1,19 +1,26 @@
 import { createSlice , createAsyncThunk } from "@reduxjs/toolkit";
 import videoService from "./videoService.js";
 import { ServiceToggleVideoLike } from "../like/likeService.js";
+import { buildRecentSearches, loadRecentSearches, saveRecentSearches } from "../../utils/searchStorage.js";
 
 const initialState = {
     videos:[],
+    searchResults: [],
+    searchPagination: null,
+    suggestions: [],
     currentVideo : null,
     isLiked : false,
     likeCount: 0,
     pagination : null,
     isLoading : false,
+    searchLoading: false,
+    suggestionLoading: false,
     isError : false,
     message :"",
     deletingId: null,   
     togglingId: null, 
     updatingId: null,
+    recentSearches: loadRecentSearches(),
 }
 
 export const fetchVideos = createAsyncThunk(
@@ -33,6 +40,57 @@ export const fetchVideoById = createAsyncThunk(
         return await videoService.getVideoById(videoId);
         } catch (error) {
         return thunkAPI.rejectWithValue(error.response?.data?.message);
+        }
+    }
+);
+
+export const searchVideos = createAsyncThunk(
+    "video/search",
+    async(params, thunkAPI)=>{
+        try {
+            return await videoService.getAllVideos(params);
+        } catch (error){
+            return thunkAPI.rejectWithValue(error.response?.data?.message);
+        }
+    }
+);
+
+export const fetchSearchSuggestions = createAsyncThunk(
+    "video/fetchSearchSuggestions",
+    async(query, thunkAPI) => {
+        const trimmedQuery = query.trim();
+        if (!trimmedQuery) return [];
+
+        try {
+            const data = await videoService.getAllVideos({
+                query: trimmedQuery,
+                limit: 6,
+                sortBy: "createdAt",
+                sortType: "desc",
+            });
+
+            const lowered = trimmedQuery.toLowerCase();
+            const suggestions = [];
+
+            data.videos.forEach((video) => {
+                const candidates = [video.title, video.description]
+                    .filter(Boolean)
+                    .map((value) => value.trim());
+
+                candidates.forEach((value) => {
+                    if (
+                        value &&
+                        value.toLowerCase().includes(lowered) &&
+                        !suggestions.some((item) => item.toLowerCase() === value.toLowerCase())
+                    ) {
+                        suggestions.push(value);
+                    }
+                });
+            });
+
+            return suggestions.slice(0, 6);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error.response?.data?.message);
         }
     }
 );
@@ -100,6 +158,17 @@ const videoSlice = createSlice({
             state.isError = false;
             state.message = "";
         },
+        addRecentSearch(state, action) {
+            state.recentSearches = buildRecentSearches(state.recentSearches, action.payload);
+        },
+        clearRecentSearches(state) {
+            state.recentSearches = [];
+            saveRecentSearches([]);
+        },
+        clearSearchSuggestions(state) {
+            state.suggestions = [];
+            state.suggestionLoading = false;
+        },
     },
     extraReducers : (builder) => {
         builder
@@ -115,6 +184,33 @@ const videoSlice = createSlice({
             state.isLoading = false;
             state.isError = true;
             state.message = action.payload;
+        })
+        .addCase(searchVideos.pending, (state) => {
+            state.searchLoading = true;
+            state.isError = false;
+            state.message = "";
+        })
+        .addCase(searchVideos.fulfilled, (state, action) => {
+            state.searchLoading = false;
+            state.searchResults = action.payload.videos;
+            state.searchPagination = action.payload.pagination;
+        })
+        .addCase(searchVideos.rejected, (state, action) => {
+            state.searchLoading = false;
+            state.isError = true;
+            state.message = action.payload;
+            state.searchResults = [];
+        })
+        .addCase(fetchSearchSuggestions.pending, (state) => {
+            state.suggestionLoading = true;
+        })
+        .addCase(fetchSearchSuggestions.fulfilled, (state, action) => {
+            state.suggestionLoading = false;
+            state.suggestions = action.payload;
+        })
+        .addCase(fetchSearchSuggestions.rejected, (state) => {
+            state.suggestionLoading = false;
+            state.suggestions = [];
         })
         .addCase(fetchVideoById.fulfilled, (state, action) => {
             state.currentVideo = action.payload;
@@ -183,7 +279,12 @@ const videoSlice = createSlice({
     }
 });
 
-export const { clearVideoError } = videoSlice.actions;
+export const {
+    clearVideoError,
+    addRecentSearch,
+    clearRecentSearches,
+    clearSearchSuggestions,
+} = videoSlice.actions;
 
 export const selectAllVideos     = (state) => state.video.videos;
 export const selectCurrentVideo  = (state) => state.video.currentVideo;
@@ -193,5 +294,10 @@ export const selectPagination    = (state) => state.video.pagination;
 export const selectDeletingId    = (state) => state.video.deletingId;
 export const selectTogglingId    = (state) => state.video.togglingId;
 export const selectUpdatingId    = (state) => state.video.updatingId;
+export const selectSearchResults = (state) => state.video.searchResults;
+export const selectSearchLoading = (state) => state.video.searchLoading;
+export const selectSearchSuggestions = (state) => state.video.suggestions;
+export const selectSuggestionLoading = (state) => state.video.suggestionLoading;
+export const selectRecentSearches = (state) => state.video.recentSearches;
 
 export default videoSlice.reducer;

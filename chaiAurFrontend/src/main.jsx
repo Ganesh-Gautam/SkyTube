@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from "react-redux";
 import { store } from "./store/store.js";
@@ -18,6 +17,7 @@ import EditChannel from './pages/EditChannel.jsx';
 import SubscriptionsPage from './pages/SubscriptionPage.jsx';
 
 import CreatorStudio from './pages/CreatorStudio.jsx';
+import Search from './pages/Search.jsx';
 
 import You from "./pages/You.jsx";
 import PlayListDetailPage from "./pages/PlaylistDetailPage.jsx"
@@ -67,7 +67,7 @@ const router = createBrowserRouter([
       },{
         path : "/channel/:channelName/edit",
         element :(
-          <AuthLayout>
+          <AuthLayout authentication={true}>
             <EditChannel/>
           </AuthLayout>
         )
@@ -96,6 +96,10 @@ const router = createBrowserRouter([
         )
       },
       {
+        path : "/search",
+        element : <Search/>
+      },
+      {
         path : "/playlists/:playlistId",
         element :
         <PlayListDetailPage/>
@@ -107,9 +111,7 @@ const router = createBrowserRouter([
 ])
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <Provider store ={store}>
-      <RouterProvider  router ={router}/>
-    </Provider>
-  </StrictMode>
+  <Provider store ={store}>
+    <RouterProvider  router ={router}/>
+  </Provider>
 )
