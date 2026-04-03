@@ -1,5 +1,6 @@
 import mongoose, {isValidObjectId} from "mongoose";
 import { Video } from "../models/video.model.js";
+import { User } from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -106,6 +107,21 @@ const getVideoById = asyncHandler(async (req, res) => {
 
     if (!video.length) {
         throw new ApiError(404, "Video not found");
+    }
+
+    if (userId) {
+        await User.findByIdAndUpdate(userId, {
+            $pull: { watchHistory: new mongoose.Types.ObjectId(videoId) }
+        });
+
+        await User.findByIdAndUpdate(userId, {
+            $push: {
+                watchHistory: {
+                    $each: [new mongoose.Types.ObjectId(videoId)],
+                    $position: 0
+                }
+            }
+        });
     }
 
     return res.status(201).json(

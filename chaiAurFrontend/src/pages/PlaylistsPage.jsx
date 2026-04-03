@@ -23,7 +23,7 @@ export default function PlaylistsPage({ channelUserId =undefined }) {
     const [deleteTarget,   setDeleteTarget]   = useState(null); 
 
     const { user } = useSelector((state) => state.auth);
-    const currentUserId = user?.user?._id;
+    const currentUserId = user?.user?._id || user?._id;
     const userId = channelUserId ?? currentUserId;
     const isOwner = !channelUserId || channelUserId === currentUserId;
 

@@ -21,6 +21,7 @@ import Search from './pages/Search.jsx';
 
 import You from "./pages/You.jsx";
 import PlayListDetailPage from "./pages/PlaylistDetailPage.jsx"
+import LikedVideos from "./pages/LikedVideos.jsx";
 
 const router = createBrowserRouter([
   {
@@ -92,6 +93,14 @@ const router = createBrowserRouter([
         element :(
           <AuthLayout authentication={true}>
             <You/> 
+          </AuthLayout>
+        )
+      },
+      {
+        path : "/feed/liked-videos",
+        element :(
+          <AuthLayout authentication={true}>
+            <LikedVideos/>
           </AuthLayout>
         )
       },

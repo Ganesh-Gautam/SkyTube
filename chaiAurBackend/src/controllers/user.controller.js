@@ -346,10 +346,22 @@ const getWatchHistory= asyncHandler(async(req,res)=>{
         }, {
             $lookup:{
                 from : "videos",
-                localField: "watchHistory",
-                foreignField: "_id",
-                as: "watchHistory",
+                let: { historyIds: "$watchHistory" },
                 pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $in: ["$_id", "$$historyIds"]
+                            }
+                        }
+                    },
+                    {
+                        $addFields: {
+                            historyOrder: {
+                                $indexOfArray: ["$$historyIds", "$_id"]
+                            }
+                        }
+                    },
                     {
                         $lookup: {
                             from: "users",
@@ -372,8 +384,17 @@ const getWatchHistory= asyncHandler(async(req,res)=>{
                                 $first : "$owner"
                             }
                         }
+                    },{
+                        $sort: {
+                            historyOrder: 1
+                        }
+                    },{
+                        $project: {
+                            historyOrder: 0
+                        }
                     }
-                ]
+                ],
+                as: "watchHistory"
             }
         }
     ])
@@ -386,8 +407,23 @@ const getWatchHistory= asyncHandler(async(req,res)=>{
     )
 })
 
+const clearWatchHistory = asyncHandler(async(req, res)=>{
+    await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                watchHistory: []
+            }
+        }
+    );
+
+    return res.status(200).json(
+        new ApiResponse(200, [], "Watch history cleared successfully")
+    );
+})
+
 export {registerUser, loginUser ,logoutUser,refreshAccessToken,
     changeCurrentPassword, getCurrentUser, 
     updateAccountDetails, updateUserAvatar,updateUserCoverImage,
-    getUserChannelProfile ,getWatchHistory
+    getUserChannelProfile ,getWatchHistory, clearWatchHistory
 };

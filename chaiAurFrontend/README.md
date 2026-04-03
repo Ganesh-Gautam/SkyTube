@@ -111,8 +111,8 @@ Each phase delivers a **fully functional app** with specific features.
 
 ### Features:
 -  Watch history
--  Liked videos page
 -  Clear history
+-  Liked videos page
 -  Remove from liked videos
 
 

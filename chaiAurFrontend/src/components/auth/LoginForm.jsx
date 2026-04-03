@@ -1,40 +1,95 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { FiArrowRight, FiEye, FiEyeOff, FiLock, FiMail } from "react-icons/fi";
 import { login } from "../../features/auth/authSlice.js";
 
 export default function LoginForm() {
-  const dispatch = useDispatch ();
+  const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({ email: "", password: "" });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(login(form));
+    setIsSubmitting(true);
+
+    try {
+      await dispatch(login(form)).unwrap();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white p-6 rounded shadow w-80"
-    >
-      <h2 className="text-lg font-bold mb-4">Login</h2>
+    <div className="grid gap-6 ">
+     
+      <form
+        onSubmit={handleSubmit}
+        className="rounded-4xl border border-zinc-200 bg-white p-8 shadow-lg"
+      >
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-400">Sign in</p>
+        <h2 className="mt-3 text-3xl font-black text-zinc-950">Login to your account</h2>
+        <p className="mt-2 text-sm text-zinc-500">
+          Use the email and password you registered with.
+        </p>
 
-      <input
-        type="email"
-        placeholder="Email"
-        className="w-full mb-3 p-2 border"
-        onChange={(e) => setForm({ ...form, email: e.target.value })}
-      />
+        <div className="mt-8 space-y-5">
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-zinc-700">Email</span>
+            <div className="flex items-center gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 focus-within:border-blue-400 focus-within:bg-white">
+              <FiMail className="text-zinc-400" size={18} />
+              <input
+                type="email"
+                placeholder="you@example.com"
+                className="w-full bg-transparent text-sm text-zinc-900 outline-none placeholder:text-zinc-400"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                required
+              />
+            </div>
+          </label>
 
-      <input
-        type="password"
-        placeholder="Password"
-        className="w-full mb-3 p-2 border"
-        onChange={(e) => setForm({ ...form, password: e.target.value })}
-      />
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-zinc-700">Password</span>
+            <div className="flex items-center gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 focus-within:border-blue-400 focus-within:bg-white">
+              <FiLock className="text-zinc-400" size={18} />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                className="w-full bg-transparent text-sm text-zinc-900 outline-none placeholder:text-zinc-400"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((value) => !value)}
+                className="text-zinc-400 transition hover:text-zinc-700"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+              </button>
+            </div>
+          </label>
+        </div>
 
-      <button className="w-full hover:bg-red-500  bg-blue-500 text-white p-2">
-        Login
-      </button>
-    </form>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-zinc-950 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {isSubmitting ? "Signing in..." : "Login"}
+          <FiArrowRight size={16} />
+        </button>
+
+        <p className="mt-6 text-sm text-zinc-500">
+          New here?{" "}
+          <Link to="/register" className="font-semibold text-blue-600 hover:text-blue-700">
+            Create an account
+          </Link>
+        </p>
+      </form>
+    </div>
   );
 }

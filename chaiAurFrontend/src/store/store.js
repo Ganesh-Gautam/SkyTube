@@ -5,6 +5,7 @@ import commentReducer from "../features/comment/commentSlice";
 import subscriptionReducer from "../features/subscription/subscriptionSlice";
 import tweetReducer from "../features/tweet/tweetSlice";
 import playlistReducer from "../features/playlist/playlistSlice";
+import libraryReducer from "../features/library/librarySlice";
 
 ;export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ import playlistReducer from "../features/playlist/playlistSlice";
     comments : commentReducer,
     subscription : subscriptionReducer,
     tweets : tweetReducer,
-    playlist : playlistReducer
+    playlist : playlistReducer,
+    library: libraryReducer
   },
 });

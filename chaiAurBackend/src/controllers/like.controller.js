@@ -129,9 +129,22 @@ const getLikedVideos = asyncHandler(async(req,res)=>{
             $unwind : "$video.owner"
         },
         {
+            $addFields: {
+                "video.isLiked": true
+            }
+        },
+        {
             $project : {
-                _id : 0,
-                video : 1
+                _id : "$video._id",
+                videoFile: "$video.videoFile",
+                thumbnail: "$video.thumbnail",
+                title: "$video.title",
+                description: "$video.description",
+                duration: "$video.duration",
+                createdAt: "$video.createdAt",
+                updatedAt: "$video.updatedAt",
+                owner: "$video.owner",
+                isLiked: "$video.isLiked"
             }
         },{
             $sort : {
