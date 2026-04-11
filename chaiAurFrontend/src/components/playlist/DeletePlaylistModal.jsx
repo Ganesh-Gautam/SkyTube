@@ -1,13 +1,6 @@
 import { useSelector } from "react-redux";
 import { selectDeletingId } from "../../features/playlist/playlistSlice";
 
-/**
- * DeletePlaylistModal
- * Props:
- *  - playlist  : playlist object
- *  - onConfirm : () => void
- *  - onClose   : () => void
- */
 export default function DeletePlaylistModal({ playlist, onConfirm, onClose }) {
     const deletingId  = useSelector(selectDeletingId);
     const isDeleting  = deletingId === playlist._id;

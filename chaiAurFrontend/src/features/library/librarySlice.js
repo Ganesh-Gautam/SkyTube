@@ -8,6 +8,8 @@ const initialState = {
   likedLoading: false,
   clearingHistory: false,
   removingLikedId: null,
+  removedLikedBackup: null,
+  historyBackup: [],
   error: "",
 };
 
@@ -84,14 +86,19 @@ const librarySlice = createSlice({
       .addCase(clearWatchHistory.pending, (state) => {
         state.clearingHistory = true;
         state.error = "";
+        state.historyBackup = state.history;
+        state.history = [];
       })
       .addCase(clearWatchHistory.fulfilled, (state) => {
         state.clearingHistory = false;
         state.history = [];
+        state.historyBackup = [];
       })
       .addCase(clearWatchHistory.rejected, (state, action) => {
         state.clearingHistory = false;
         state.error = action.payload;
+        state.history = state.historyBackup;
+        state.historyBackup = [];
       })
       .addCase(fetchLikedVideos.pending, (state) => {
         state.likedLoading = true;
@@ -106,18 +113,24 @@ const librarySlice = createSlice({
         state.error = action.payload;
       })
       .addCase(removeLikedVideo.pending, (state, action) => {
-        state.removingLikedId = action.meta.arg;
+        const videoId = action.meta.arg;
+        state.removingLikedId = videoId;
         state.error = "";
+        state.removedLikedBackup =
+          state.likedVideos.find((video) => video._id === videoId) || null;
+        state.likedVideos = state.likedVideos.filter((video) => video._id !== videoId);
       })
-      .addCase(removeLikedVideo.fulfilled, (state, action) => {
+      .addCase(removeLikedVideo.fulfilled, (state) => {
         state.removingLikedId = null;
-        state.likedVideos = state.likedVideos.filter(
-          (video) => video._id !== action.payload
-        );
+        state.removedLikedBackup = null;
       })
       .addCase(removeLikedVideo.rejected, (state, action) => {
         state.removingLikedId = null;
         state.error = action.payload;
+        if (state.removedLikedBackup) {
+          state.likedVideos.unshift(state.removedLikedBackup);
+        }
+        state.removedLikedBackup = null;
       });
   },
 });

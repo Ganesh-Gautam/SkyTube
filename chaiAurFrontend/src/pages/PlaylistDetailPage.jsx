@@ -15,6 +15,7 @@ import PlaylistFormModal from "../components/playlist/PlaylistFormModal";
 import DeletePlaylistModal from "../components/playlist/DeletePlaylistModal";
 import { useNavigate } from "react-router-dom";
 import { useSelector as useAuthSelector } from "react-redux";
+import useInfiniteFeed from "../hooks/useInfiniteFeed.js";
 
 export default function PlaylistDetailPage() {
     const { playlistId } = useParams();
@@ -30,6 +31,14 @@ export default function PlaylistDetailPage() {
     const currentUserId = user?.user?._id;
     const isOwner = playlist?.owner?._id === currentUserId ||
                     playlist?.owner === currentUserId;
+
+    const videos = playlist?.videos || [];
+    const { visibleItems, hasMore, sentinelRef } = useInfiniteFeed({
+        items: videos,
+        initialCount: 8,
+        step: 4,
+        resetKey: `${playlistId}-${videos.length}`,
+    });
 
     useEffect(() => {
         dispatch(fetchPlaylistById(playlistId));
@@ -82,21 +91,20 @@ export default function PlaylistDetailPage() {
         );
     }
 
-    const videos = playlist.videos || [];
-
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
 
             {/* Playlist header */}
-            <div className="flex items-start gap-4 mb-8">
-                {/* Cover */}
-                <div className="w-40 aspect-video rounded-xl overflow-hidden
+            <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-8">
+                <div className="w-full sm:w-40 aspect-video rounded-xl overflow-hidden
                                 bg-zinc-100 dark:bg-zinc-800 shrink-0">
                     {videos[0]?.thumbnail ? (
                         <img
                             src={videos[0].thumbnail}
                             alt={playlist.name}
                             className="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center">
@@ -105,14 +113,13 @@ export default function PlaylistDetailPage() {
                     )}
                 </div>
 
-                {/* Meta */}
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                         <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 leading-tight">
                             {playlist.name}
                         </h1>
                         {isOwner && (
-                            <div className="flex items-center gap-1 shrink-0">
+                            <div className="flex items-center gap-1 shrink-0 self-start sm:self-auto">
                                 <button
                                     onClick={() => setShowEdit(true)}
                                     title="Edit playlist"
@@ -160,7 +167,7 @@ export default function PlaylistDetailPage() {
                 </div>
             ) : (
                 <div className="space-y-1">
-                    {videos.map((video, idx) => (
+                    {visibleItems.map((video, idx) => (
                         <PlaylistVideoRow
                             key={video._id}
                             video={video}
@@ -170,10 +177,17 @@ export default function PlaylistDetailPage() {
                             onRemove={handleRemoveVideo}
                         />
                     ))}
+                    {hasMore ? (
+                        <div
+                            ref={sentinelRef}
+                            className="mt-3 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-5 text-center text-sm text-zinc-500"
+                        >
+                            Loading more playlist videos...
+                        </div>
+                    ) : null}
                 </div>
             )}
 
-            {/* Modals */}
             {showEdit && (
                 <PlaylistFormModal
                     playlist={playlist}

@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {  
     selectDeletingId, 
-    deleteVideo as deleteVideoThunk
+    deleteVideo as deleteVideoThunk,
+    togglePublishStatus,
 } from "../features/video/videoSlice";
 import EditVideoModal from "../components/studio/EditVideoModal.jsx";
 import DeleteConfirmModal from "../components/studio/DeleteConfirmModal.jsx";
@@ -56,8 +57,31 @@ export default function CreatorStudio() {
 
     const handleConfirmDelete = async () => {
         if (!deleteVideo) return;
-        dispatch(deleteVideoThunk(deleteVideo._id));
+        const videoId = deleteVideo._id;
+        const result = await dispatch(deleteVideoThunk(videoId));
+        if (!result.error) {
+            setVideos((current) => current.filter((video) => video._id !== videoId));
+        }
         setDeleteVideo(null);
+    };
+
+    const handleTogglePublish = async (videoId) => {
+        const result = await dispatch(togglePublishStatus(videoId));
+        if (!result.error) {
+            setVideos((current) =>
+                current.map((video) =>
+                    video._id === videoId
+                        ? { ...video, isPublished: result.payload.isPublished }
+                        : video
+                )
+            );
+        }
+    };
+
+    const handleVideoSaved = (updatedVideo) => {
+        setVideos((current) =>
+            current.map((video) => (video._id === updatedVideo._id ? updatedVideo : video))
+        );
     };
 
     const published  = videos.filter((v) => v.isPublished).length;
@@ -80,7 +104,7 @@ export default function CreatorStudio() {
                 </div>
 
                 {/* Stats row */}
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
                         { label: "Total videos", value: videos.length },
                         { label: "Total Likes", value: stats?.totalLikes},
@@ -193,6 +217,7 @@ export default function CreatorStudio() {
                                         <VideoRow
                                             key={video._id}
                                             video={video}
+                                            onTogglePublish={handleTogglePublish}
                                             onEdit={setEditVideo}
                                             onDelete={setDeleteVideo}
                                         />
@@ -208,6 +233,7 @@ export default function CreatorStudio() {
             {editVideo && (
                 <EditVideoModal
                     video={editVideo}
+                    onSaved={handleVideoSaved}
                     onClose={() => setEditVideo(null)}
                 />
             )}

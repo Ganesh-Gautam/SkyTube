@@ -23,7 +23,6 @@ function SubscribeButton({ channelId }) {
   const handleSubscribe = async () => {
     try {
       await dispatch(toggleSubscription(channelId)).unwrap();
-      dispatch(fetchChannelSubscribers(channelId));
     } catch (err) {
       console.error("Subscription Error:", err);
     }
@@ -55,7 +54,6 @@ function SubscribeButton({ channelId }) {
         </span>
       </div>
 
-      {/* Error message from backend */}
       {error && (
         <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">
           {error}

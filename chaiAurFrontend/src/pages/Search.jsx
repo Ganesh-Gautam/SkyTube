@@ -10,6 +10,7 @@ import {
   selectSearchResults,
   selectVideoError,
 } from "../features/video/videoSlice.js";
+import useInfiniteFeed from "../hooks/useInfiniteFeed.js";
 
 const DATE_FILTERS = [
   { value: "any", label: "Any time" },
@@ -64,6 +65,12 @@ export default function Search() {
   }, [dispatch, query, sortBy, sortType]);
 
   const filteredResults = results.filter((video) => matchesDateFilter(video, date));
+  const { visibleItems, hasMore, sentinelRef } = useInfiniteFeed({
+    items: filteredResults,
+    initialCount: 9,
+    step: 6,
+    resetKey: `${query}-${date}-${sortBy}-${sortType}-${filteredResults.length}`,
+  });
   const selectedSort = `${sortBy}:${sortType}`;
 
   const updateParam = (key, value, fallback) => {
@@ -88,27 +95,27 @@ export default function Search() {
 
   return (
     <section className="space-y-6">
-      <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
+      <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">
               Search & Discovery
             </p>
-            <h1 className="mt-2 text-2xl font-semibold text-zinc-900">
+            <h1 className="mt-2 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
               {query ? `Results for "${query}"` : "Discover videos"}
             </h1>
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
               Search by title or description, then narrow things down with sort and date filters.
             </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <label className="text-sm font-medium text-zinc-700">
+            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Sort
               <select
                 value={selectedSort}
                 onChange={handleSortChange}
-                className="mt-1 block w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none transition focus:border-blue-400 focus:bg-white"
+                className="mt-1 block w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none transition focus:border-blue-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:bg-zinc-900"
               >
                 {SORT_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -118,12 +125,12 @@ export default function Search() {
               </select>
             </label>
 
-            <label className="text-sm font-medium text-zinc-700">
+            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Uploaded
               <select
                 value={date}
                 onChange={handleDateChange}
-                className="mt-1 block w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none transition focus:border-blue-400 focus:bg-white"
+                className="mt-1 block w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none transition focus:border-blue-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:bg-zinc-900"
               >
                 {DATE_FILTERS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -143,30 +150,39 @@ export default function Search() {
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-5 text-sm text-red-700">
+        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-5 text-sm text-red-700 dark:border-red-700 dark:bg-red-900 dark:text-red-100">
           {error || "Something went wrong while loading search results."}
         </div>
       ) : filteredResults.length > 0 ? (
         <>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
             {filteredResults.length} video{filteredResults.length === 1 ? "" : "s"} found
           </p>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {filteredResults.map((video) => (
+            {visibleItems.map((video) => (
               <VideoCard key={video._id} video={video} />
             ))}
           </div>
+          {hasMore ? (
+            <div
+              ref={sentinelRef}
+              className="rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-5 text-center text-sm text-zinc-500 dark:text-zinc-400"
+            >
+              Loading more results...
+            </div>
+          ) : null}
         </>
       ) : (
-        <div className="rounded-3xl border border-dashed border-zinc-300 bg-zinc-50 px-6 py-12 text-center">
-          <h2 className="text-lg font-semibold text-zinc-800">
+        <div className="rounded-3xl border border-dashed border-zinc-300 bg-zinc-50 px-6 py-12 text-center dark:border-zinc-700 dark:bg-zinc-800">
+          <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100">
             {query ? "No videos matched this search" : "No videos to discover yet"}
           </h2>
-          <p className="mt-2 text-sm text-zinc-500">
+          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
             Try a different keyword, switch the date filter, or sort by a different field.
           </p>
         </div>
       )}
     </section>
+
   );
 }

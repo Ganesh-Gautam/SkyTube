@@ -6,12 +6,6 @@ import {
     selectSubmitting,
 } from "../../features/playlist/playlistSlice";
 
-/**
- * PlaylistFormModal
- * Props:
- *  - playlist  : null (create mode) | playlist object (edit mode)
- *  - onClose   : () => void
- */
 export default function PlaylistFormModal({ playlist = null, onClose }) {
     const dispatch   = useDispatch();
     const submitting = useSelector(selectSubmitting);

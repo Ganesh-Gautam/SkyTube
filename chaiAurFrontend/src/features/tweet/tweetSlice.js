@@ -78,6 +78,7 @@ const tweetSlice = createSlice({
   initialState: {
     tweets: [],
     error: null,
+    loading: false,
     submitting: false,      
     deletingId: null,      
     likingId: null,         
@@ -91,12 +92,15 @@ const tweetSlice = createSlice({
 
     builder
       .addCase(fetchUserTweets.pending, (state) => { 
+        state.loading = true;
         state.error = null;
       })
       .addCase(fetchUserTweets.fulfilled, (state, action) => { 
+        state.loading = false;
         state.tweets = action.payload;
       })
       .addCase(fetchUserTweets.rejected, (state, action) => { 
+        state.loading = false;
         state.error = action.payload;
       });
 
@@ -180,6 +184,7 @@ export const { clearTweetError } = tweetSlice.actions;
 
 export const selectAllTweets    = (state) => state.tweets.tweets; 
 export const selectTweetError   = (state) => state.tweets.error;
+export const selectTweetLoading = (state) => state.tweets.loading;
 export const selectSubmitting   = (state) => state.tweets.submitting;
 export const selectDeletingId   = (state) => state.tweets.deletingId;
 export const selectLikingId     = (state) => state.tweets.likingId;

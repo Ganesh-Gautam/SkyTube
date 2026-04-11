@@ -12,6 +12,7 @@ const initialState = {
   isSubscribed: false,
   loading: false,
   error: null,
+  optimisticSnapshot: null,
 };
 
 
@@ -76,29 +77,66 @@ const subscriptionSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
+      .addCase(toggleSubscription.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+        state.optimisticSnapshot = {
+          isSubscribed: state.isSubscribed,
+          subscriberCount: state.subscriberCount,
+        };
+
+        state.isSubscribed = !state.isSubscribed;
+        state.subscriberCount = Math.max(
+          0,
+          state.subscriberCount + (state.isSubscribed ? 1 : -1)
+        );
+
+        if (!state.isSubscribed) {
+          state.subscribedChannels = state.subscribedChannels.filter(
+            (channel) => channel.channelId !== action.meta.arg
+          );
+        }
+      })
       .addCase(toggleSubscription.fulfilled, (state, action) => {
         state.loading = false;
         state.isSubscribed = action.payload.isSubscribed;
-        state.subscriberCount += state.isSubscribed ? 1 : -1;
-      })
-      .addCase(toggleSubscription.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.optimisticSnapshot = null;
       })
       .addCase(toggleSubscription.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        if (state.optimisticSnapshot) {
+          state.isSubscribed = state.optimisticSnapshot.isSubscribed;
+          state.subscriberCount = state.optimisticSnapshot.subscriberCount;
+        }
+        state.optimisticSnapshot = null;
       })
 
+      .addCase(fetchSubscribedChannels.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchSubscribedChannels.fulfilled, (state, action) => {
         state.loading = false;
         state.subscribedChannels = action.payload.channels;
       })
+      .addCase(fetchSubscribedChannels.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
+      .addCase(fetchChannelSubscribers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchChannelSubscribers.fulfilled, (state, action) => {
         state.loading = false;
         state.subscriberCount = action.payload.subscriberCount;
         state.isSubscribed = action.payload.isSubscribed;
+      })
+      .addCase(fetchChannelSubscribers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

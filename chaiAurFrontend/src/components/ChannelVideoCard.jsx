@@ -26,6 +26,8 @@ export default function ChannelVideoCard({ video, isOwner = false }) {
             src={video.thumbnail}
             alt={video.title}
             className="w-full h-48 object-cover rounded"
+            loading="lazy"
+            decoding="async"
           />
           <span 
             className="absolute bottom-2 right-2 
@@ -37,7 +39,7 @@ export default function ChannelVideoCard({ video, isOwner = false }) {
           </span>
         </Link>
 
-        {/* Edit button — owner only, appears on hover */}
+        {/* Edit button — owner only */}
         {isOwner && (
           <button
             onClick={handleEditClick}

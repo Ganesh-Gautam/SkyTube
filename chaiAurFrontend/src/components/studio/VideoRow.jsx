@@ -1,7 +1,6 @@
 
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { 
-    togglePublishStatus, 
     selectDeletingId,
     selectTogglingId,
 } from "../../features/video/videoSlice";
@@ -26,8 +25,7 @@ function timeAgo(dateStr) {
 }
 
 
-export default function VideoRow({ video, onEdit, onDelete }) {
-    const dispatch   = useDispatch();
+export default function VideoRow({ video, onEdit, onDelete, onTogglePublish }) {
     const togglingId = useSelector(selectTogglingId);
     const deletingId = useSelector(selectDeletingId);
 
@@ -79,7 +77,7 @@ export default function VideoRow({ video, onEdit, onDelete }) {
             {/* Publish toggle */}
             <td className="py-3 px-4 text-center">
                 <button
-                    onClick={() => dispatch(togglePublishStatus(video._id))}
+                    onClick={() => onTogglePublish(video._id)}
                     disabled={isToggling}
                     title={video.isPublished ? "Click to unpublish" : "Click to publish"}
                     className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors

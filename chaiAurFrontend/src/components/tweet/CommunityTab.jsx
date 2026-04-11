@@ -5,14 +5,23 @@ import {
   clearTweetError,
   selectAllTweets,
   selectTweetError,
+  selectTweetLoading,
 } from "../../features/tweet/tweetSlice.js";
 import TweetComposer from "./TweetComposer.jsx";
 import TweetCard from "./TweetCard.jsx";
+import useInfiniteFeed from "../../hooks/useInfiniteFeed.js";
 
 export default function CommunityTab({ channelOwner, channelId, currentUser, isOwner }) {
   const dispatch = useDispatch();
   const tweets = useSelector(selectAllTweets);
   const error = useSelector(selectTweetError);
+  const loading = useSelector(selectTweetLoading);
+  const { visibleItems, hasMore, sentinelRef } = useInfiniteFeed({
+    items: tweets,
+    initialCount: 8,
+    step: 4,
+    resetKey: `${channelId}-${tweets.length}`,
+  });
 
   useEffect(() => {
     dispatch(fetchUserTweets(channelId));
@@ -52,7 +61,7 @@ export default function CommunityTab({ channelOwner, channelId, currentUser, isO
       )}
 
       {/* Empty state */}
-      {!error && tweets.length === 0 && (
+      {!loading && !error && tweets.length === 0 && (
         <div className="flex flex-col items-center gap-3 py-16 text-center">
           <div className="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
             <svg className="w-6 h-6 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -74,7 +83,22 @@ export default function CommunityTab({ channelOwner, channelId, currentUser, isO
       )}
 
       {/* Posts feed */}
-      {!error && tweets.length > 0 && (
+      {loading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={index}
+              className="animate-pulse rounded-2xl border border-zinc-200 bg-white p-4"
+            >
+              <div className="mb-3 h-4 w-1/3 rounded bg-zinc-200" />
+              <div className="space-y-2">
+                <div className="h-3 w-full rounded bg-zinc-100" />
+                <div className="h-3 w-4/5 rounded bg-zinc-100" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : !error && tweets.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
@@ -86,13 +110,21 @@ export default function CommunityTab({ channelOwner, channelId, currentUser, isO
             </span>
           </div>
 
-          {tweets.map((tweet) => (
+          {visibleItems.map((tweet) => (
             <TweetCard
               key={tweet._id}
               tweet={tweet}
               currentUserId={currentUser?._id}
             />
           ))}
+          {hasMore ? (
+            <div
+              ref={sentinelRef}
+              className="rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-5 text-center text-sm text-zinc-500"
+            >
+              Loading more posts...
+            </div>
+          ) : null}
         </div>
       )}
     </section>

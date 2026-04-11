@@ -71,6 +71,8 @@ export default function TweetComposer({ currentUser, editTweet = null, onCancelE
             src={currentUser?.avatar || `https://ui-avatars.com/api/?name=${currentUser?.username}&background=random`}
             alt={currentUser?.username}
             className="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-zinc-100 dark:ring-zinc-800"
+            loading="lazy"
+            decoding="async"
         />
 
         <div className="flex-1 flex flex-col gap-3">

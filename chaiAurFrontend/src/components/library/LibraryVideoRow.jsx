@@ -22,6 +22,8 @@ export default function LibraryVideoRow({
           src={video.thumbnail}
           alt={video.title}
           className="h-44 w-full rounded-xl object-cover"
+          loading="lazy"
+          decoding="async"
         />
         <span className="absolute bottom-3 right-3 rounded bg-black/75 px-2 py-1 text-xs font-semibold text-white">
           {formatDuration(video.duration)}
@@ -43,6 +45,8 @@ export default function LibraryVideoRow({
             src={video.owner?.avatar}
             alt={video.owner?.userName}
             className="h-8 w-8 rounded-full object-cover"
+            loading="lazy"
+            decoding="async"
           />
           <span>{video.owner?.userName}</span>
         </Link>

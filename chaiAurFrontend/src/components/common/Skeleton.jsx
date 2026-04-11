@@ -1,5 +1,5 @@
 export default function Skeleton({ className }) {
   return (
-    <div className={`animate-pulse bg-gray-300 rounded ${className}`} />
+    <div className={`animate-pulse rounded bg-zinc-200 dark:bg-zinc-800 ${className}`} />
   );
 }

@@ -4,6 +4,8 @@ import { store } from "./store/store.js";
 import AuthLayout from './layouts/AuthLayout.jsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
+import AppErrorBoundary from './components/common/AppErrorBoundary.jsx';
+import { ThemeProvider } from "./context/ThemeProvider.jsx";
 
 import App from './App.jsx'
 import Home from './pages/Home.jsx'
@@ -120,7 +122,11 @@ const router = createBrowserRouter([
 ])
 
 createRoot(document.getElementById('root')).render(
-  <Provider store ={store}>
-    <RouterProvider  router ={router}/>
-  </Provider>
+  <AppErrorBoundary>
+    <Provider store ={store}>
+      <ThemeProvider>
+        <RouterProvider  router ={router}/>
+      </ThemeProvider>
+    </Provider>
+  </AppErrorBoundary>
 )

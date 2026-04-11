@@ -27,7 +27,7 @@ const FilePickerCard = ({
   const iconMarkup = createElement(icon, { size: 20 });
 
   return (
-    <label className="group relative block cursor-pointer overflow-hidden rounded-3xl border border-dashed border-zinc-300 bg-white/80 p-5 transition hover:border-sky-400 hover:bg-sky-50/70">
+    <label className="group relative block cursor-pointer overflow-hidden rounded-3xl border border-dashed border-zinc-300 bg-white/80 p-5 transition hover:border-sky-400 hover:bg-sky-50/70 dark:border-zinc-700 dark:bg-zinc-800/80 dark:hover:border-sky-500 dark:hover:bg-zinc-700/70">
       <input
         type="file"
         accept={accept}
@@ -36,19 +36,19 @@ const FilePickerCard = ({
       />
 
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-zinc-950 text-white shadow-lg shadow-zinc-950/10 transition group-hover:scale-105 group-hover:bg-sky-500">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-zinc-950 text-white shadow-lg shadow-zinc-950/10 transition group-hover:scale-105 group-hover:bg-sky-500 dark:bg-zinc-700 dark:group-hover:bg-sky-600">
           {iconMarkup}
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold text-zinc-900">{label}</p>
+            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{label}</p>
             {file ? <FiCheckCircle className="text-emerald-500" size={16} /> : null}
           </div>
-          <p className="mt-1 text-sm text-zinc-500">
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
             {file ? file.name : helperText}
           </p>
-          <p className="mt-3 text-xs font-medium uppercase tracking-[0.22em] text-zinc-400">
+          <p className="mt-3 text-xs font-medium uppercase tracking-[0.22em] text-zinc-400 dark:text-zinc-500">
             {file ? `${formatFileSize(file.size)} selected` : "Click to browse"}
           </p>
         </div>
@@ -84,44 +84,43 @@ export default function UploadVideo() {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-4xl bg-linear-to-br from-sky-50 via-white to-amber-50 p-4 sm:p-6 lg:p-8">
+    <div className="relative overflow-hidden rounded-4xl bg-linear-to-br from-sky-50 via-white to-amber-50 p-4 sm:p-6 lg:p-8 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-0 top-0 h-40 w-40 rounded-full bg-sky-200/40 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-56 w-56 rounded-full bg-amber-200/50 blur-3xl" />
+        <div className="absolute left-0 top-0 h-40 w-40 rounded-full bg-sky-200/40 blur-3xl dark:bg-sky-900/40" />
+        <div className="absolute bottom-0 right-0 h-56 w-56 rounded-full bg-amber-200/50 blur-3xl dark:bg-amber-900/40" />
       </div>
 
       <div className="relative grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
- 
-        <section className="rounded-4xl border border-white/70 bg-white/90 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.4)] backdrop-blur sm:p-8">
+        <section className="rounded-4xl border border-white/70 bg-white/90 p-6 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.4)] backdrop-blur sm:p-8 dark:border-zinc-700 dark:bg-zinc-800/90 dark:shadow-[0_20px_60px_-30px_rgba(0,0,0,0.6)]">
           <div className="mb-6 flex flex-col gap-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-600">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-600 dark:text-sky-400">
               Upload form
             </p>
-            <h2 className="text-2xl font-black tracking-tight text-zinc-950">
+            <h2 className="text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-100">
               Set up the details
             </h2>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
               Fill out the basics and attach both media files before publishing.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-zinc-800">Video title</label>
+              <label className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">Video title</label>
               <input
                 type="text"
                 placeholder="Give your video a scroll-stopping title"
-                className="w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-sky-400 focus:bg-white"
+                className="w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-sky-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:bg-zinc-900"
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-zinc-800">Description</label>
+              <label className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">Description</label>
               <textarea
                 placeholder="Tell viewers what they should expect from this video"
-                className="min-h-32 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-sky-400 focus:bg-white"
+                className="min-h-32 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-sky-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:bg-zinc-900"
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
               />
@@ -147,13 +146,13 @@ export default function UploadVideo() {
             </div>
 
             {isError && message ? (
-              <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+              <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-700 dark:bg-red-900 dark:text-red-100">
                 {message}
               </div>
             ) : null}
 
-            <div className="flex flex-col gap-3 border-t border-zinc-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-zinc-500">
+            <div className="flex flex-col gap-3 border-t border-zinc-200 pt-5 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-700">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 {videoFile && thumbnail
                   ? "Everything is attached and ready for upload."
                   : "Add both the video and thumbnail to continue."}
@@ -162,7 +161,7 @@ export default function UploadVideo() {
               <button
                 type="submit"
                 disabled={!canSubmit}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-zinc-300"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-sky-600 dark:disabled:bg-zinc-600"
               >
                 <FiUploadCloud size={18} />
                 {isLoading ? "Uploading..." : "Publish video"}
@@ -172,5 +171,6 @@ export default function UploadVideo() {
         </section>
       </div>
     </div>
+
   );
 }

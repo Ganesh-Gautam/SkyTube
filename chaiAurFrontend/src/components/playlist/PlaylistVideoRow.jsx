@@ -11,15 +11,6 @@ function formatDuration(seconds) {
     return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-/**
- * PlaylistVideoRow
- * Props:
- *  - video      : video object
- *  - playlistId : string
- *  - index      : number (position in list)
- *  - isOwner    : boolean
- *  - onRemove   : ({ videoId, playlistId }) => void
- */
 export default function PlaylistVideoRow({
     video,
     playlistId,
@@ -34,7 +25,7 @@ export default function PlaylistVideoRow({
 
     return (
         <div
-            className={`group flex items-center gap-3 p-3 rounded-xl
+            className={`group flex items-start sm:items-center gap-3 p-3 rounded-xl
                         hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition-colors
                         ${isRemoving ? "opacity-40 pointer-events-none" : ""}`}
         >
@@ -45,13 +36,15 @@ export default function PlaylistVideoRow({
 
             {/* Thumbnail */}
             <Link to={`/watch/${video._id}`} className="shrink-0">
-                <div className="relative w-32 aspect-video rounded-lg overflow-hidden
+                <div className="relative w-24 sm:w-32 aspect-video rounded-lg overflow-hidden
                                 bg-zinc-100 dark:bg-zinc-800">
                     {video.thumbnail ? (
                         <img
                             src={video.thumbnail}
                             alt={video.title}
                             className="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center">
@@ -96,7 +89,7 @@ export default function PlaylistVideoRow({
                     title="Remove from playlist"
                     className="shrink-0 p-2 rounded-lg text-zinc-400 hover:text-red-500
                                hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors
-                               opacity-0 group-hover:opacity-100"
+                               opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                 >
                     {isRemoving ? (
                         <span className="w-3.5 h-3.5 border-2 border-zinc-300

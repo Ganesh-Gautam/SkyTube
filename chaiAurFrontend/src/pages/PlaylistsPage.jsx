@@ -11,6 +11,7 @@ import {
 import PlaylistCard from "../components/playlist/PlaylistCard";
 import PlaylistFormModal from "../components/playlist/PlaylistFormModal";
 import DeletePlaylistModal from "../components/playlist/DeletePlaylistModal"; 
+import useInfiniteFeed from "../hooks/useInfiniteFeed.js";
 
 export default function PlaylistsPage({ channelUserId =undefined }) {
     const dispatch  = useDispatch();
@@ -26,6 +27,12 @@ export default function PlaylistsPage({ channelUserId =undefined }) {
     const currentUserId = user?.user?._id || user?._id;
     const userId = channelUserId ?? currentUserId;
     const isOwner = !channelUserId || channelUserId === currentUserId;
+    const { visibleItems, hasMore, sentinelRef } = useInfiniteFeed({
+        items: playlists,
+        initialCount: 8,
+        step: 4,
+        resetKey: `${userId}-${playlists.length}`,
+    });
 
 
     useEffect(() => {
@@ -42,7 +49,7 @@ export default function PlaylistsPage({ channelUserId =undefined }) {
     return (
         <div className="max-w-6xl mx-auto px-4 py-8"> 
             {/* Header */} 
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
                 <div>
                     <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                         Your Playlists
@@ -124,17 +131,25 @@ export default function PlaylistsPage({ channelUserId =undefined }) {
             {/* Grid */}
             {status === "succeeded" && playlists.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {playlists.map((playlist) => (
+                    {visibleItems.map((playlist) => (
                         <PlaylistCard
                             key={playlist._id}
                             playlist={playlist}
-                            isOwner={true}
+                            isOwner={isOwner}
                             onEdit={setEditPlaylist}
                             onDelete={setDeleteTarget}
                         />
                     ))}
                 </div>
             )}
+            {status === "succeeded" && hasMore ? (
+                <div
+                    ref={sentinelRef}
+                    className="mt-5 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-5 text-center text-sm text-zinc-500"
+                >
+                    Loading more playlists...
+                </div>
+            ) : null}
 
             {/* Modals */}
             {showCreate && (

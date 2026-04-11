@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import PlaylistsPage from "./PlaylistsPage";
 import LibraryVideoRow from "../components/library/LibraryVideoRow.jsx";
+import useInfiniteFeed from "../hooks/useInfiniteFeed.js";
 import {
   clearWatchHistory,
   fetchWatchHistory,
@@ -17,6 +17,12 @@ export default function You() {
   const { history, historyLoading, clearingHistory, error } = useSelector(
     (state) => state.library
   );
+  const { visibleItems, hasMore, sentinelRef } = useInfiniteFeed({
+    items: history,
+    initialCount: 8,
+    step: 4,
+    resetKey: history.length,
+  });
 
   useEffect(() => {
     if (userId) {
@@ -60,12 +66,36 @@ export default function You() {
         {!userId ? (
           <p className="text-sm text-zinc-500">Please log in to view your history.</p>
         ) : historyLoading ? (
-          <p className="text-sm text-zinc-500">Loading history...</p>
+          <div className="space-y-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={index}
+                className="animate-pulse rounded-2xl border border-zinc-200 bg-white p-4"
+              >
+                <div className="flex flex-col gap-4 md:flex-row md:items-center">
+                  <div className="h-40 w-full rounded-xl bg-zinc-200 md:w-72" />
+                  <div className="flex-1 space-y-3">
+                    <div className="h-4 w-3/4 rounded bg-zinc-200" />
+                    <div className="h-3 w-1/3 rounded bg-zinc-100" />
+                    <div className="h-3 w-full rounded bg-zinc-100" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : history.length ? (
           <div className="space-y-4">
-            {history.map((video) => (
+            {visibleItems.map((video) => (
               <LibraryVideoRow key={video._id} video={video} />
             ))}
+            {hasMore ? (
+              <div
+                ref={sentinelRef}
+                className="rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-5 text-center text-sm text-zinc-500"
+              >
+                Loading more history...
+              </div>
+            ) : null}
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-8 text-sm text-zinc-600">
@@ -73,14 +103,14 @@ export default function You() {
           </div>
         )}
       </section>
-      <section className="max-w-sm p-4 bg-white rounded-lg shadow-md hover:shadow-2xl hover:cursor-pointer transition-shadow">
+      <section className="max-w-sm rounded-lg bg-white p-4 shadow-md transition-shadow hover:cursor-pointer hover:shadow-2xl">
         <button
           onClick={() => navigate("/feed/liked-videos")}
           className="w-full text-left"
         >
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Liked Videos</h2>
+          <h2 className="mb-2 text-lg font-semibold text-gray-800">Liked Videos</h2>
           <p className="text-sm text-gray-600">
-            View all the videos you’ve liked in one place.
+            View all the videos you've liked in one place.
           </p>
         </button>
       </section>

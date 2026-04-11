@@ -127,7 +127,6 @@ Each phase delivers a **fully functional app** with specific features.
 -  Error boundaries
 -  Optimistic UI updates
 -  Image lazy loading
--  Video thumbnail generation
 -  Responsive design refinement
 
 ---

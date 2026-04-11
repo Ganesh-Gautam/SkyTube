@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateVideo, selectUpdatingId } from "../../features/video/videoSlice";
 
-export default function EditVideoModal({ video, onClose }) {
+export default function EditVideoModal({ video, onClose, onSaved }) {
     const dispatch   = useDispatch();
     const updatingId = useSelector(selectUpdatingId);
     const isUpdating = updatingId === video._id;
@@ -33,10 +33,12 @@ export default function EditVideoModal({ video, onClose }) {
         formData.append("title",       title.trim());
         formData.append("description", description.trim());
         if (thumbnail) formData.append("thumbnail", thumbnail);
-        console.log("form",thumbnail)
 
         const result = await dispatch(updateVideo({ videoId: video._id, formData }));
-        if (!result.error) onClose();
+        if (!result.error) {
+            onSaved?.(result.payload);
+            onClose();
+        }
     };
 
     const isDirty =
