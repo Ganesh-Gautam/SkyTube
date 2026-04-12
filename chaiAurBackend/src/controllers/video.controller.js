@@ -144,7 +144,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     const validLimit = Math.min(Math.max(Number(limit), 1), 50);
     const validPage = Math.max(Number(page), 1);
 
-    const filter = { isPublished: true }; // ✅ Only fetch published videos
+    const filter = { isPublished: true };
 
     if (query) {
         filter.$or = [

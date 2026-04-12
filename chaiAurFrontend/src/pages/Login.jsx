@@ -48,11 +48,11 @@ export default function Login() {
             </span>
 
             <div className="flex items-center gap-3 rounded-2xl 
-                            border border-zinc-200 dark:border-zinc-600 
-                            bg-zinc-50 dark:bg-zinc-700 
-                            px-4 py-3 
-                            focus-within:border-blue-400 
-                            focus-within:bg-white dark:focus-within:bg-zinc-600">
+              border border-zinc-200 dark:border-zinc-600 
+              bg-zinc-50 dark:bg-zinc-700 
+              px-4 py-3 
+              focus-within:border-blue-400 
+              focus-within:bg-white dark:focus-within:bg-zinc-600">
 
               <FiMail className="text-zinc-400 dark:text-zinc-300" size={18} />
 
@@ -60,9 +60,9 @@ export default function Login() {
                 type="email"
                 placeholder="you@example.com"
                 className="w-full bg-transparent text-sm 
-                          text-zinc-900 dark:text-white 
-                          outline-none 
-                          placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
+                  text-zinc-900 dark:text-white 
+                  outline-none 
+                  placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
@@ -76,11 +76,11 @@ export default function Login() {
             </span>
 
             <div className="flex items-center gap-3 rounded-2xl 
-                            border border-zinc-200 dark:border-zinc-600 
-                            bg-zinc-50 dark:bg-zinc-700 
-                            px-4 py-3 
-                            focus-within:border-blue-400 
-                            focus-within:bg-white dark:focus-within:bg-zinc-600">
+              border border-zinc-200 dark:border-zinc-600 
+              bg-zinc-50 dark:bg-zinc-700 
+              px-4 py-3 
+              focus-within:border-blue-400 
+              focus-within:bg-white dark:focus-within:bg-zinc-600">
 
               <FiLock className="text-zinc-400 dark:text-zinc-300" size={18} />
 
@@ -88,9 +88,9 @@ export default function Login() {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 className="w-full bg-transparent text-sm 
-                          text-zinc-900 dark:text-white 
-                          outline-none 
-                          placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
+                  text-zinc-900 dark:text-white 
+                  outline-none 
+                  placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
@@ -111,13 +111,13 @@ export default function Login() {
           type="submit"
           disabled={isSubmitting}
           className="mt-8 w-full rounded-2xl 
-                    bg-zinc-950 dark:bg-white 
-                    text-white dark:text-zinc-900 
-                    px-5 py-3.5 text-sm font-semibold 
-                    hover:bg-zinc-800 dark:hover:bg-zinc-200 
-                    transition disabled:opacity-70
-                    hover:cursor-pointer
-                    "
+            bg-zinc-950 dark:bg-white 
+            text-white dark:text-zinc-900 
+            px-5 py-3.5 text-sm font-semibold 
+            hover:bg-zinc-800 dark:hover:bg-zinc-200 
+            transition disabled:opacity-70
+            hover:cursor-pointer
+            "
         >
           {isSubmitting ? "Signing in..." : "Login"}
         </button>

@@ -103,13 +103,11 @@ export default function EditChannel() {
   const [avatarFile, setAvatarFile] = useState(null);
   const [coverFile, setCoverFile] = useState(null);
 
-  // Separate loading states per section
   const [loadingAccount, setLoadingAccount] = useState(false);
   const [loadingAvatar, setLoadingAvatar] = useState(false);
   const [loadingCover, setLoadingCover] = useState(false);
   const [loadingPassword, setLoadingPassword] = useState(false);
 
-  // Separate feedback per section (replaces alert())
   const [feedback, setFeedback] = useState({});
 
   const setMsg = (key, msg, isError = false) => {
@@ -286,7 +284,7 @@ export default function EditChannel() {
           <Field label="New password">
             <InputField
               type="password"
-              placeholder="Min. 6 characters"
+              placeholder="Enter new password"
               value={passwordData.newPassword}
               onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
             />

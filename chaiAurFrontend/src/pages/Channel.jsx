@@ -11,7 +11,8 @@ import useInfiniteFeed from "../hooks/useInfiniteFeed.js";
 
 export default function Channel() {
   const { channelName } = useParams();
-  const { user } = useSelector((state) => state.auth);
+  const authUser = useSelector((state) => state.auth.user);
+  const user = authUser?.user ?? authUser ?? null;
 
   const [stats, setStats] = useState(null);
   const [videos, setVideos] = useState([]);
@@ -21,7 +22,7 @@ export default function Channel() {
 
   const isOwner = useMemo(
     () =>
-      user?.user?.userName?.trim().toLowerCase() ===
+      user?.userName?.trim().toLowerCase() ===
       channelName?.trim().toLowerCase(),
     [user, channelName]
   );
@@ -101,7 +102,7 @@ export default function Channel() {
             <div>
               <h1 className="text-2xl font-bold">{channelName}</h1>
               <p className="text-gray-500">{stats?.totalVideos} videos</p>
-              <SubscribeButton channelId={stats?.channelId} />
+              {!isOwner ? <SubscribeButton channelId={stats?.channelId} /> : null}
             </div>
           </div>
 

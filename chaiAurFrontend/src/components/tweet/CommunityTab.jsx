@@ -34,8 +34,7 @@ export default function CommunityTab({ channelOwner, channelId, currentUser, isO
     <section className="max-w-2xl mx-auto px-4 py-6 space-y-5">
       {isOwner && currentUser && (
         <TweetComposer currentUser={currentUser} />
-      )}
-
+      )}    
       {/* Error state */}
       {error && (
         <div className="flex flex-col items-center gap-3 py-12 text-center">
@@ -52,8 +51,8 @@ export default function CommunityTab({ channelOwner, channelId, currentUser, isO
           <button
             onClick={handleRetry}
             className="px-4 py-1.5 text-xs font-semibold text-blue-600 border border-blue-200
-                       dark:border-blue-800 dark:text-blue-400 rounded-lg hover:bg-blue-50
-                       dark:hover:bg-blue-950/40 transition-colors"
+              dark:border-blue-800 dark:text-blue-400 rounded-lg hover:bg-blue-50
+              dark:hover:bg-blue-950/40 transition-colors"
           >
             Try again
           </button>
@@ -105,7 +104,7 @@ export default function CommunityTab({ channelOwner, channelId, currentUser, isO
               Posts
             </span>
             <span className="text-xs text-zinc-400 dark:text-zinc-600 bg-zinc-100 dark:bg-zinc-800
-                             px-2 py-0.5 rounded-full font-mono">
+              px-2 py-0.5 rounded-full font-mono">
               {tweets.length}
             </span>
           </div>

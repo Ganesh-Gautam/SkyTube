@@ -246,7 +246,7 @@ export default function Header() {
                 />
               </button>
             ) : (
-              <div className="hidden items-center gap-2 sm:flex">
+              <div className="items-center gap-2 sm:flex">
                 <button
                   type="button"
                   onClick={() => navigate("/login")}
@@ -314,8 +314,9 @@ export default function Header() {
                 {/* Logout */}
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
                     dispatch(logout());
+                    navigate("/");
                     setMenuOpen(false);
                   }}
                   className="mt-3 flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-medium text-red-600 transition hover:bg-red-50 dark:hover:bg-red-950/40"

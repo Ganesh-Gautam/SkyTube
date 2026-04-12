@@ -48,24 +48,28 @@ export default function EditVideoModal({ video, onClose, onSaved }) {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm"
             onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         >
             <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200
-                            dark:border-zinc-800 shadow-2xl w-full max-w-lg
+                            dark:border-zinc-800 shadow-2xl 
+                            w-[95vw] sm:w-full max-w-lg
+                            max-h-[90vh] sm:max-h-[85vh]
+                            overflow-y-auto
                             animate-in fade-in zoom-in-95 duration-150">
 
-                {/* Header */}
-                <div className="flex items-center justify-between px-5 py-4 border-b
-                                border-zinc-100 dark:border-zinc-800">
+                {/* Header  */}
+                <div className="sticky top-0 bg-white dark:bg-zinc-900 z-10
+                            flex items-center justify-between px-4 sm:px-5 py-3 border-b
+                            border-zinc-100 dark:border-zinc-800">
                     <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">
                         Edit video
                     </h2>
                     <button
                         onClick={onClose}
                         className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-600
-                                   dark:hover:text-zinc-200 hover:bg-zinc-100
-                                   dark:hover:bg-zinc-800 transition-colors"
+                                dark:hover:text-zinc-200 hover:bg-zinc-100
+                                dark:hover:bg-zinc-800 transition-colors"
                     >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -73,20 +77,18 @@ export default function EditVideoModal({ video, onClose, onSaved }) {
                     </button>
                 </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="p-5 space-y-4">
-
-                    {/* Thumbnail */}
-                    <div className="space-y-1.5">
+                <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-3 sm:space-y-4">
+                    <div className="space-y-1">
                         <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
                             Thumbnail
                         </label>
                         <div
                             onClick={() => fileRef.current?.click()}
                             className="relative group cursor-pointer rounded-xl overflow-hidden
-                                       border-2 border-dashed border-zinc-200 dark:border-zinc-700
-                                       hover:border-blue-400 dark:hover:border-blue-500
-                                       transition-colors aspect-video bg-zinc-50 dark:bg-zinc-800"
+                                    border-2 border-dashed border-zinc-200 dark:border-zinc-700
+                                    hover:border-blue-400 dark:hover:border-blue-500
+                                    transition-colors aspect-video bg-zinc-50 dark:bg-zinc-800
+                                    max-h-45 sm:max-h-none"  
                         >
                             {preview ? (
                                 <>
@@ -124,7 +126,7 @@ export default function EditVideoModal({ video, onClose, onSaved }) {
                     </div>
 
                     {/* Title */}
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                         <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
                             Title
                         </label>
@@ -134,18 +136,18 @@ export default function EditVideoModal({ video, onClose, onSaved }) {
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Video title"
                             maxLength={100}
-                            className="w-full px-3 py-2.5 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-800
-                                       border border-zinc-200 dark:border-zinc-700
-                                       text-zinc-900 dark:text-zinc-100
-                                       placeholder:text-zinc-400
-                                       focus:outline-none focus:ring-2 focus:ring-blue-500/40
-                                       focus:border-blue-400 dark:focus:border-blue-500
-                                       transition-colors"
+                            className="w-full px-3 py-2 sm:py-2.5 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-800
+                                    border border-zinc-200 dark:border-zinc-700
+                                    text-zinc-900 dark:text-zinc-100
+                                    placeholder:text-zinc-400
+                                    focus:outline-none focus:ring-2 focus:ring-blue-500/40
+                                    focus:border-blue-400 dark:focus:border-blue-500
+                                    transition-colors"
                         />
                     </div>
 
                     {/* Description */}
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                         <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
                             Description
                         </label>
@@ -153,15 +155,15 @@ export default function EditVideoModal({ video, onClose, onSaved }) {
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder="Describe your video…"
-                            rows={3}
+                            rows={window.innerWidth < 640 ? 2 : 3}  // Fewer rows on mobile
                             maxLength={500}
-                            className="w-full px-3 py-2.5 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-800
-                                       border border-zinc-200 dark:border-zinc-700
-                                       text-zinc-900 dark:text-zinc-100
-                                       placeholder:text-zinc-400 resize-none
-                                       focus:outline-none focus:ring-2 focus:ring-blue-500/40
-                                       focus:border-blue-400 dark:focus:border-blue-500
-                                       transition-colors"
+                            className="w-full px-3 py-2 sm:py-2.5 text-sm rounded-lg bg-zinc-50 dark:bg-zinc-800
+                                    border border-zinc-200 dark:border-zinc-700
+                                    text-zinc-900 dark:text-zinc-100
+                                    placeholder:text-zinc-400 resize-none
+                                    focus:outline-none focus:ring-2 focus:ring-blue-500/40
+                                    focus:border-blue-400 dark:focus:border-blue-500
+                                    transition-colors"
                         />
                         <p className="text-right text-xs text-zinc-400 font-mono">
                             {description.length}/500
@@ -169,22 +171,24 @@ export default function EditVideoModal({ video, onClose, onSaved }) {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-2 justify-end pt-1">
+                    <div className="sticky bottom-0 bg-white dark:bg-zinc-900 pt-2 pb-1
+                                flex gap-2 justify-end border-t border-zinc-100 dark:border-zinc-800
+                                -mx-4 sm:-mx-5 px-4 sm:px-5 mt-2">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400
-                                       hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+                            className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400
+                                    hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={!isDirty || isUpdating || !title.trim()}
-                            className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold
-                                       text-white bg-blue-600 hover:bg-blue-500 rounded-lg
-                                       disabled:opacity-40 disabled:cursor-not-allowed
-                                       transition-all active:scale-95"
+                            className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 text-sm font-semibold
+                                    text-white bg-blue-600 hover:bg-blue-500 rounded-lg
+                                    disabled:opacity-40 disabled:cursor-not-allowed
+                                    transition-all active:scale-95"
                         >
                             {isUpdating ? (
                                 <>

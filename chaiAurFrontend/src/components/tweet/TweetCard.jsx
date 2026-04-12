@@ -50,9 +50,9 @@ export default function TweetCard({ tweet, currentUserId }) {
     <>
       <article
         className={`group bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200
-                    dark:border-zinc-800 p-4 transition-all duration-200
-                    hover:border-zinc-300 dark:hover:border-zinc-700
-                    hover:shadow-sm ${isDeleting ? "opacity-50 pointer-events-none" : ""}`}
+          dark:border-zinc-800 p-4 transition-all duration-200
+          hover:border-zinc-300 dark:hover:border-zinc-700
+          hover:shadow-sm ${isDeleting ? "opacity-50 pointer-events-none" : ""}`}
       >
         <div className="flex gap-3">
           {/* Avatar */}
@@ -71,7 +71,7 @@ export default function TweetCard({ tweet, currentUserId }) {
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2 flex-wrap">                 
                 <span className="text-xs text-zinc-400 dark:text-zinc-500">
-                  @{tweet.owner?.userName}
+                  {tweet.owner?.userName}
                 </span>
                 <span className="text-zinc-300 dark:text-zinc-700 text-xs">·</span>
                 <span className="text-xs text-zinc-400 dark:text-zinc-500" title={new Date(tweet.createdAt).toLocaleString()}>
@@ -89,7 +89,7 @@ export default function TweetCard({ tweet, currentUserId }) {
                     onClick={() => setIsEditing(true)}
                     title="Edit post"
                     className="p-1.5 rounded-lg text-zinc-400 hover:text-blue-500
-                               hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors"
+                    hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round"
@@ -122,11 +122,11 @@ export default function TweetCard({ tweet, currentUserId }) {
                 onClick={handleLike}
                 disabled={isLiking}
                 className={`flex items-center gap-1.5 text-xs font-medium rounded-lg px-2 py-1
-                            transition-all duration-150 active:scale-95 select-none
-                            ${tweet.isLiked
-                              ? "text-red-500 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-950/60"
-                              : "text-zinc-400 hover:text-red-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                            } ${isLiking ? "opacity-60 cursor-not-allowed" : ""}`}
+                  transition-all duration-150 active:scale-95 select-none
+                  ${tweet.isLiked
+                    ? "text-red-500 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-950/60"
+                    : "text-zinc-400 hover:text-red-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  } ${isLiking ? "opacity-60 cursor-not-allowed" : ""}`}
               >
                 {isLiking ? (
                   <span className="w-3.5 h-3.5 border-2 border-current/30 border-t-current rounded-full animate-spin" />

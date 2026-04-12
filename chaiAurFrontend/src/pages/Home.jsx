@@ -19,9 +19,7 @@ const Home = () => {
   useEffect(() => {
     dispatch(fetchVideos());
   }, [dispatch]);
-
-
- 
+   
   return (
     <div className="space-y-10">
       <section className="space-y-5">

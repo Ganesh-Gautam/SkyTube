@@ -115,7 +115,7 @@ const Register = () => {
                 name="fullName"
                 value={form.fullName}
                 onChange={handleChange}
-                placeholder="Pankaj Kumar"
+                placeholder="Sayajirao Gaekwad III"
                 className="w-full bg-transparent outline-none text-sm text-zinc-900 dark:text-white"
               />
             </div>
@@ -178,11 +178,20 @@ const Register = () => {
               </button>
             </div>
           </label>
-        </div>
 
-        <div className="mt-8 grid gap-5 md:grid-cols-2">
-          <input type="file" onChange={(e) => setAvatar(e.target.files?.[0])} className={inputBaseClassName} />
-          <input type="file" onChange={(e) => setCoverImage(e.target.files?.[0])} className={inputBaseClassName} />
+          <label className="md:col-span-2">
+            <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+              Avatar
+            </span>
+            <input type="file" onChange={(e) => setAvatar(e.target.files?.[0])} className={inputBaseClassName} />
+          </label>
+
+          <label className="md:col-span-2">
+            <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+              Cover Image
+            </span>
+            <input type="file" onChange={(e) => setCoverImage(e.target.files?.[0])} className={inputBaseClassName} />
+          </label>
         </div>
 
         <button

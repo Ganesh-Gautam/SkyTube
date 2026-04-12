@@ -1,12 +1,10 @@
 import {Router} from "express"
 import {getChannelStats ,getChannelVideos} from "../controllers/dashboard.controller.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { optionalVerifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.use(verifyJWT);
-
-router.route("/stats/:channelName").get(getChannelStats);
-router.route("/videos/:channelName").get(getChannelVideos);
+router.route("/stats/:channelName").get(optionalVerifyJWT, getChannelStats);
+router.route("/videos/:channelName").get(optionalVerifyJWT, getChannelVideos);
 
 export default router;
